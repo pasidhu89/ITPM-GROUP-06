@@ -16,6 +16,7 @@ import { getError } from '../utils';
 import { Store } from '../Store';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import { toast } from 'react-toastify';
+import Sentiment from 'sentiment';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -42,8 +43,12 @@ function ProductScreen() {
   let reviewsRef = useRef();
 
   const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
+
+  // todo
+  const [comment, setComment] = useState([]);
+  const [filteredComments, setFilteredComments] = useState([]);
+  const [showAllComments, setShowAllComments] = useState(true);
 
   const navigate = useNavigate();
   const params = useParams();
@@ -67,6 +72,32 @@ function ProductScreen() {
     };
     fetchData();
   }, [slug]);
+
+  // todo........................
+
+  function analyzeSentiment(comment) {
+    console.log('analyzing sentiment:', comment);
+    const sentiment = new Sentiment();
+    const { score } = sentiment.analyze(comment);
+    console.log('sentiment score:', score);
+    return score;
+  }
+
+  // todo........................
+
+  function handleFilterComments(sentiment) {
+    setShowAllComments(false);
+    const filtered = product.reviews.filter((review) => {
+      const score = analyzeSentiment(review.comment);
+      return sentiment > 0 ? score > 0 : score < 0;
+    });
+    setFilteredComments(filtered);
+  }
+
+  function handleShowAllComment() {
+    setShowAllComments(true);
+    setFilteredComments([]);
+  }
 
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart, userInfo } = state;
@@ -207,23 +238,48 @@ function ProductScreen() {
           </Card>
         </Col>
       </Row>
+
       <div className="my-3">
         <h2 ref={reviewsRef}>Reviews</h2>
         <div className="mb-3">
           {product.reviews.length === 0 && (
             <MessageBox>There is no review</MessageBox>
           )}
+
+          <div >
+            <Button onClick={() => handleFilterComments(1)}>
+              Show Positive Comments
+            </Button>
+            <Button onClick={() => handleFilterComments(-1)}>
+              Show Negative Comments
+            </Button>
+            <Button onClick={handleShowAllComment}>Show All Comments</Button>
+          </div>
+
         </div>
         <ListGroup>
-          {product.reviews.map((review) => (
-            <ListGroup.Item key={review._id}>
-              <strong>{review.name}</strong>
-              <Rating rating={review.rating} caption=" "></Rating>
-              <p>{review.createdAt.substring(0, 10)}</p>
-              <p>{review.comment}</p>
-            </ListGroup.Item>
-          ))}
+          {showAllComments
+            ? product.reviews.map((review) => (
+                <ListGroup.Item key={review._id}>
+                  <strong>{review.name}</strong>
+                  <Rating rating={review.rating} caption=" "></Rating>
+                  <p>{review.createdAt.substring(0, 10)}</p>
+                  <p>{review.comment}</p>
+                  <p>Sentiment Score: {analyzeSentiment(review.comment)}</p>
+                </ListGroup.Item>
+              ))
+            : filteredComments.map((review) => (
+                <ListGroup.Item key={review._id}>
+                  <strong>{review.name}</strong>
+                  <Rating rating={review.rating} caption=" "></Rating>
+                  <p>{review.createdAt.substring(0, 10)}</p>
+                  <h4>{review.name}</h4>
+                  <p>{review.comment}</p>
+                  <p>Sentiment Score: {analyzeSentiment(review.comment)}</p>
+                </ListGroup.Item>
+              ))}
         </ListGroup>
+
         <div className="my-3">
           {userInfo ? (
             <form onSubmit={submitHandler}>
