@@ -139,13 +139,14 @@ postRouter.get(
     const queryFilter =
       searchQuery && searchQuery !== 'all'
         ? {
-            name: {
+            caption: {
               $regex: searchQuery,
               $options: 'i',
             },
           }
         : {};
-    const categoryFilter = category && category !== 'all' ? { category } : {};
+    const typeFilter = type && type !== 'all' ? { type } : {};
+
     const ratingFilter =
       rating && rating !== 'all'
         ? {
@@ -154,50 +155,54 @@ postRouter.get(
             },
           }
         : {};
-    const priceFilter =
-      price && price !== 'all'
-        ? {
-            // 1-50
-            price: {
-              $gte: Number(price.split('-')[0]),
-              $lte: Number(price.split('-')[1]),
-            },
-          }
-        : {};
+
     const sortOrder =
       order === 'featured'
         ? { featured: -1 }
-        : order === 'lowest'
-        ? { price: 1 }
-        : order === 'highest'
-        ? { price: -1 }
         : order === 'toprated'
         ? { rating: -1 }
         : order === 'newest'
         ? { createdAt: -1 }
         : { _id: -1 };
 
-    const products = await Product.find({
+    const posts = await Post.find({
       ...queryFilter,
-      ...categoryFilter,
-      ...priceFilter,
+      ...typeFilter,
       ...ratingFilter,
     })
       .sort(sortOrder)
       .skip(pageSize * (page - 1))
       .limit(pageSize);
 
-    const countProducts = await Product.countDocuments({
+    const countPosts = await Post.countDocuments({
       ...queryFilter,
-      ...categoryFilter,
-      ...priceFilter,
+      ...typeFilter,
       ...ratingFilter,
     });
     res.send({
-      products,
-      countProducts,
+      posts,
+      countPosts,
       page,
-      pages: Math.ceil(countProducts / pageSize),
+      pages: Math.ceil(countPosts / pageSize),
     });
   })
 );
+
+postRouter.get(
+  '/types',
+  expressAsyncHandler(async (req, res) => {
+    const types = await Post.find().distinct('type');
+    res.send(types);
+  })
+);
+
+postRouter.get('/:id', async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  if (post) {
+    res.send(post);
+  } else {
+    res.status(404).send({ message: 'Post Not Found' });
+  }
+});
+
+export default postRouter;
