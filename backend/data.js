@@ -15,6 +15,31 @@ const data = {
       isAdmin: false,
     },
   ],
+
+  posts: [
+    {
+      caption: 'travel experience',
+      image: '/images/p1.jpg', // 679px × 829px
+      description: 'marvels experience',
+      type: 'complain',
+      location: 'gampaha',
+      rating: 4.5,
+      numReviews: 10,
+
+    },
+    {
+      caption: 'travel experience 2',
+      image: '/images/p2.jpg', // 679px × 829px
+      description: 'marvels experience 2',
+      type: 'complement',
+      location: 'gampaha',
+      rating: 3.5,
+      numReviews: 10,
+    },
+  ],
+
+
+
   products: [
     {
       // _id: '1',
