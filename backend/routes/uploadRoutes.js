@@ -14,10 +14,15 @@ uploadRouter.post(
   isAdmin,
   upload.single('file'),
   async (req, res) => {
+    // cloudinary.config({
+    //   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    //   api_key: process.env.CLOUDINARY_API_KEY,
+    //   api_secret: process.env.CLOUDINARY_API_SECRET,
+    // });
     cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
+      cloud_name: "dgougw8nk",
+      api_key: "313326531641793",
+      api_secret: "aEWid4LXZxdnGhLjfVvyiTBazwg"
     });
     const streamUpload = (req) => {
       return new Promise((resolve, reject) => {
