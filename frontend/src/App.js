@@ -36,6 +36,8 @@ import UserEditScreen from './screens/UserEditScreen';
 import MapScreen from './screens/MapScreen';
 import ForgetPasswordScreen from './screens/ForgetPasswordScreen';
 import ResetPasswordScreen from './screens/ResetPasswordScreen';
+import PostEditScreen from './screens/PostEditScreen';
+import PostListScreen from './screens/PostListScreen';
 
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -105,6 +107,9 @@ function App() {
                     <NavDropdown title={userInfo.name} id="basic-nav-dropdown">
                       <LinkContainer to="/profile">
                         <NavDropdown.Item>User Profile</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to="/userposts">
+                        <NavDropdown.Item>User Posts</NavDropdown.Item>
                       </LinkContainer>
                       <LinkContainer to="/orderhistory">
                         <NavDropdown.Item>Order History</NavDropdown.Item>
@@ -193,6 +198,24 @@ function App() {
                 }
               />
               <Route
+                path="/userposts"
+                element={
+                  <ProtectedRoute>
+                    <PostListScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="userpost/:id"
+                element={
+                  <ProtectedRoute>
+                    <PostEditScreen />
+                  </ProtectedRoute>
+                }
+              ></Route>
+
+
+              <Route
                 path="/map"
                 element={
                   <ProtectedRoute>
@@ -222,6 +245,8 @@ function App() {
                 element={<ShippingAddressScreen />}
               ></Route>
               <Route path="/payment" element={<PaymentMethodScreen />}></Route>
+
+
               {/* Admin Routes */}
               <Route
                 path="/admin/dashboard"
