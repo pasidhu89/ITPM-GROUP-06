@@ -76,12 +76,11 @@ export default function PostListScreen() {
 
   const { state } = useContext(Store);
   const { userInfo } = state;
-  // todo....................................................................................
+// todo....................................................................................
   useEffect(() => {
     const fetchData = async () => {
       try {
-         const { data } = await axios.get(`/api/posts/admin?page=${page} `, {
-       
+        const { data } = await axios.get(`/api/posts/admin?page=${page} `, {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
 
@@ -194,6 +193,7 @@ export default function PostListScreen() {
                     </Button>
                   </td>
                 </tr>
+              
               ))}
             </tbody>
           </table>

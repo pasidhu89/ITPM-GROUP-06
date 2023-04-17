@@ -6,48 +6,29 @@ import axios from 'axios';
 import { useContext } from 'react';
 import { Store } from '../Store';
 
-function Product(props) {
-  const { product } = props;
-
-  const { state, dispatch: ctxDispatch } = useContext(Store);
-  const {
-    cart: { cartItems },
-  } = state;
-
-  const addToCartHandler = async (item) => {
-    const existItem = cartItems.find((x) => x._id === product._id);
-    const quantity = existItem ? existItem.quantity + 1 : 1;
-    const { data } = await axios.get(`/api/products/${item._id}`);
-    if (data.countInStock < quantity) {
-      window.alert('Sorry. Product is out of stock');
-      return;
-    }
-    ctxDispatch({
-      type: 'CART_ADD_ITEM',
-      payload: { ...item, quantity },
-    });
-  };
+function Post(props) {
+  const { post } = props;
 
   return (
     <Card>
-      <Link to={`/product/${product.slug}`}>
-        <img src={product.image} className="card-img-top" alt={product.name} />
+      <Link to={`/post/${post._id}`}>
+        <img src={post.image} className="card-img-top" alt={post.caption} />
       </Link>
       <Card.Body>
-        <Link to={`/product/${product.slug}`}>
-          <Card.Title>{product.name}</Card.Title>
+        <Link to={`/post/${post._id}`}>
+          <Card.Title>{post.caption}</Card.Title>
         </Link>
-        <Rating rating={product.rating} numReviews={product.numReviews} />
-        <Card.Text>${product.price}</Card.Text>
-        {product.countInStock === 0 ? (
-          <Button variant="light" disabled>
-            Out of stock
-          </Button>
-        ) : (
-          <Button onClick={() => addToCartHandler(product)}>Add to cart</Button>
-        )}
+        <Card.Text>{post.description}</Card.Text>
+        <Rating rating={post.rating} numReviews={post.numReviews} />
+
+        <Card.Text>{post.location}</Card.Text>
+
+        {/* <Card.Text>{post.type}</Card.Text> */}
+        <Link to={`/post/${post._id}`}>
+          <button className="btn btn-primary">Read More</button>
+        </Link>
       </Card.Body>
     </Card>
   );
 }
-export default Product;
+export default Post;

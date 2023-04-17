@@ -3,6 +3,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from './screens/ProductScreen';
+import PostScreen from './screens/PostScreen';
 import Navbar from 'react-bootstrap/Navbar';
 import Badge from 'react-bootstrap/Badge';
 import Nav from 'react-bootstrap/Nav';
@@ -64,6 +65,21 @@ function App() {
     };
     fetchCategories();
   }, []);
+
+  const [types, setTypes] = useState([]);
+
+  useEffect(() => {
+    const fetchTypes = async () => {
+      try {
+        const { data } = await axios.get(`/api/posts/types`);
+        setTypes(data);
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    };
+    fetchTypes();
+  }, []);
+
   return (
     <BrowserRouter>
       <div
@@ -170,11 +186,26 @@ function App() {
                 </LinkContainer>
               </Nav.Item>
             ))}
+            <Nav.Item>
+              <strong>Types</strong>
+            </Nav.Item>
+            {types.map((type) => (
+              <Nav.Item key={type}>
+                <LinkContainer
+                  to={{ pathname: '/search', search: `category=${type}` }}
+                  onClick={() => setSidebarIsOpen(false)}
+                >
+                  <Nav.Link>{type}</Nav.Link>
+                </LinkContainer>
+              </Nav.Item>
+            ))}
           </Nav>
         </div>
+
         <main>
           <Container className="mt-3">
             <Routes>
+              <Route path="/post/:_id" element={<PostScreen />} />
               <Route path="/product/:slug" element={<ProductScreen />} />
               <Route path="/cart" element={<CartScreen />} />
               <Route path="/search" element={<SearchScreen />} />
@@ -214,7 +245,6 @@ function App() {
                 }
               ></Route>
 
-
               <Route
                 path="/map"
                 element={
@@ -245,7 +275,6 @@ function App() {
                 element={<ShippingAddressScreen />}
               ></Route>
               <Route path="/payment" element={<PaymentMethodScreen />}></Route>
-
 
               {/* Admin Routes */}
               <Route
