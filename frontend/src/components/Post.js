@@ -18,7 +18,9 @@ function Post(props) {
         <Link to={`/post/${post._id}`}>
           <Card.Title>{post.caption}</Card.Title>
         </Link>
-        <Card.Text>{post.description}</Card.Text>
+
+        <Card.Text>{post.description.split(" ").slice(0,15).join(" ")}...</Card.Text>
+
         <Rating rating={post.rating} numReviews={post.numReviews} />
 
         <Card.Text>{post.location}</Card.Text>

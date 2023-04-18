@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useContext, useEffect, useReducer, useRef, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
@@ -51,7 +51,7 @@ function PostScreen() {
   const [showAllComments, setShowAllComments] = useState(true);
 
   const params = useParams();
-  const { _id } = params;
+  const { id } = params;
 
   const [{ loading, error, post, loadingCreateReview }, dispatch] = useReducer(
     reducer,
@@ -65,14 +65,15 @@ function PostScreen() {
     const fetchData = async () => {
       dispatch({ type: 'FETCH_REQUEST' });
       try {
-        const result = await axios.get(`/api/posts/_id/${_id}`);
+        console.log(params);
+        const result = await axios.get(`/api/posts/${id}`);
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
     };
     fetchData();
-  }, [_id]);
+  }, [id]);
 
   // todo........................
 
@@ -163,7 +164,7 @@ function PostScreen() {
                 numReviews={post.numReviews}
               ></Rating>
             </ListGroup.Item>
-
+            {/* <ListGroup.Item>Pirce : ${product.price}</ListGroup.Item> */}
             <ListGroup.Item>
               <Row xs={1} md={2} className="g-2">
                 {[post.image, ...post.images].map((x) => (
@@ -194,10 +195,35 @@ function PostScreen() {
               <ListGroup variant="flush">
                 <ListGroup.Item>
                   <Row>
-                    <Col>Location:</Col>
-                    <Col>{post.location}</Col>
+                    <Col>location:</Col>
+                    <Col>
+                      <Badge bg="primary">{post.location} </Badge>
+                    </Col>
                   </Row>
                 </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <div>
+                      <Col>Type:</Col>
+                      <br />
+                    </div>
+                    {post.type === 'complain' ? (
+                      <Badge bg="danger">Complain</Badge>
+                    ) : (
+                      <Badge bg="success">Compliment</Badge>
+                    )}
+                  </Row>
+                </ListGroup.Item>
+
+                {/* {product.countInStock > 0 && (
+                  <ListGroup.Item>
+                    <div className="d-grid">
+                      <Button onClick={addToCartHandler} variant="primary">
+                        Add to Cart
+                      </Button>
+                    </div>
+                  </ListGroup.Item>
+                )} */}
               </ListGroup>
             </Card.Body>
           </Card>
@@ -286,7 +312,7 @@ function PostScreen() {
           ) : (
             <MessageBox>
               Please{' '}
-              <Link to={`/signin?redirect=/post/${post._id}`}>Sign In</Link> to
+              <Link to={`/signin?redirect=/post/${post.id}`}>Sign In</Link> to
               write a review
             </MessageBox>
           )}

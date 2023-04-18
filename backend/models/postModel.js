@@ -10,7 +10,6 @@ const reviewSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
 const postSchema = new mongoose.Schema(
   {
     caption: { type: String, required: true, unique: true },

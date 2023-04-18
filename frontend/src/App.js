@@ -3,7 +3,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from './screens/ProductScreen';
-import PostScreen from './screens/PostScreen';
 import Navbar from 'react-bootstrap/Navbar';
 import Badge from 'react-bootstrap/Badge';
 import Nav from 'react-bootstrap/Nav';
@@ -39,6 +38,7 @@ import ForgetPasswordScreen from './screens/ForgetPasswordScreen';
 import ResetPasswordScreen from './screens/ResetPasswordScreen';
 import PostEditScreen from './screens/PostEditScreen';
 import PostListScreen from './screens/PostListScreen';
+import PostScreen from './screens/PostScreen';
 
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -205,7 +205,8 @@ function App() {
         <main>
           <Container className="mt-3">
             <Routes>
-              <Route path="/post/:_id" element={<PostScreen />} />
+              
+              <Route path="/post/:id" element={< PostScreen/>} />
               <Route path="/product/:slug" element={<ProductScreen />} />
               <Route path="/cart" element={<CartScreen />} />
               <Route path="/search" element={<SearchScreen />} />
