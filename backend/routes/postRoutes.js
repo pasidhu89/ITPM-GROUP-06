@@ -102,7 +102,7 @@ postRouter.post(
   })
 );
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 10;
 
 postRouter.get(
   '/admin',
@@ -194,7 +194,27 @@ postRouter.get(
     const types = await Post.find().distinct('type');
     res.send(types);
   })
+); 
+
+postRouter.get(
+  '/summary',
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const types = await Post.aggregate([
+      {
+        $group: {
+          _id: '$type',
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+    res.send({ types });
+  })
 );
+
+
+
 
 postRouter.get('/:id', async (req, res) => {
   const post = await Post.findById(req.params.id);

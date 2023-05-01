@@ -11,7 +11,6 @@ import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import Button from 'react-bootstrap/Button';
 import Product from '../components/Product';
-import Post from '../components/Post';
 import LinkContainer from 'react-router-bootstrap/LinkContainer';
 
 const reducer = (state, action) => {
@@ -27,7 +26,6 @@ const reducer = (state, action) => {
         countProducts: action.payload.countProducts,
         loading: false,
       };
-      
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
 
@@ -120,21 +118,6 @@ export default function SearchScreen() {
     fetchCategories();
   }, [dispatch]);
 
-  const [types, setTypes] = useState([]);
-
-  useEffect(() => {
-    const fetchTypes = async () => {
-      try {
-        const { data } = await axios.get(`/api/posts/types`);
-        setTypes(data);
-      } catch (err) {
-        toast.error(getError(err));
-      }
-    };
-    fetchTypes();
-  }, [dispatch]);
-
-
   const getFilterUrl = (filter, skipPathname) => {
     const filterPage = filter.page || page;
     const filterCategory = filter.category || category;
@@ -175,27 +158,6 @@ export default function SearchScreen() {
                 </li>
               ))}
             </ul>
-            {/* todo............................................................................ */}
-            {/* <ul>
-              <li>
-                <Link
-                  className={'all' === type ? 'text-bold' : ''}
-                  to={getFilterUrl({ type: 'all' })}
-                >
-                  Any type
-                </Link>
-              </li>
-              {types.map((c) => (
-                <li key={c}>
-                  <Link
-                    className={c === type ? 'text-bold' : ''}
-                    to={getFilterUrl({ type: c })}
-                  >
-                    {c}
-                  </Link>
-                </li>
-              ))}
-            </ul> */}
           </div>
           <div>
             <h3>Price</h3>

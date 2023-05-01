@@ -59,7 +59,7 @@ export default function DashboardScreen() {
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
         <>
-          <Row>
+          {/* <Row>
             <Col md={4}>
               <Card>
                 <Card.Body>
@@ -97,8 +97,8 @@ export default function DashboardScreen() {
                 </Card.Body>
               </Card>
             </Col>
-          </Row>
-          <div className="my-3">
+          </Row> */}
+          {/* <div className="my-3">
             <h2>Sales</h2>
             {summary.dailyOrders.length === 0 ? (
               <MessageBox>No Sale</MessageBox>
@@ -114,7 +114,7 @@ export default function DashboardScreen() {
                 ]}
               ></Chart>
             )}
-          </div>
+          </div> */}
           <div className="my-3">
             <h2>Categories</h2>
             {summary.productCategories.length === 0 ? (
