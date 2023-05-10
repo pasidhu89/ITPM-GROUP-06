@@ -53,7 +53,7 @@ const HomeScreen = () => {
           <Row>
           {console.log(posts)}
           {posts.map((post) => (
-            <Col key={post._id} sm={6} md={4} lg={3} className="mb-3">
+            <Col key={post._id} sm={6} md={4} lg={3} className="mb-2">
               <Post post={post} />
             </Col>
           ))}

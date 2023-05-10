@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -10,7 +11,11 @@ import Form from 'react-bootstrap/Form';
 import { Helmet } from 'react-helmet-async';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import Button from 'react-bootstrap/Button';
+import { Button, ButtonGroup } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -43,7 +48,6 @@ const reducer = (state, action) => {
 };
 
 export default function PostEditScreen() {
-    
   const navigate = useNavigate();
   const params = useParams(); // /post/:id
   const { id: postId } = params;
@@ -55,7 +59,7 @@ export default function PostEditScreen() {
       loading: true,
       error: '',
     });
-
+  // const [email, setEmail] = useState('');
   const [caption, setCaption] = useState('');
   const [image, setImage] = useState('');
   const [images, setImages] = useState([]);
@@ -65,6 +69,7 @@ export default function PostEditScreen() {
 
   useEffect(() => {
     const fetchData = async () => {
+      // console.log(userInfo);
       try {
         dispatch({ type: 'FETCH_REQUEST' });
         const { data } = await axios.get(`/api/posts/${postId}`);
@@ -74,6 +79,7 @@ export default function PostEditScreen() {
         setDescription(data.description);
         setType(data.type);
         setLocation(data.location);
+        // setEmail(data.email);
         dispatch({ type: 'FETCH_SUCCESS' });
       } catch (err) {
         dispatch({
@@ -84,7 +90,6 @@ export default function PostEditScreen() {
     };
     fetchData();
   }, [postId]);
-
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -110,13 +115,38 @@ export default function PostEditScreen() {
       });
       toast.success('Post updated successfully');
 
-    //   todo.................................................................................................................
+      //   todo.................................................................................................................
       navigate('/userposts');
     } catch (err) {
       toast.error(getError(err));
       dispatch({ type: 'UPDATE_FAIL' });
     }
   };
+  // const uploadFileHandler = async (e, forImages) => {
+  //   const file = e.target.files[0];
+  //   const bodyFormData = new FormData();
+  //   bodyFormData.append('file', file);
+  //   try {
+  //     dispatch({ type: 'UPLOAD_REQUEST' });
+  //     const { data } = await axios.post('/api/upload', bodyFormData, {
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //         authorization: `Bearer ${userInfo.token}`,
+  //       },
+  //     });
+  //     dispatch({ type: 'UPLOAD_SUCCESS' });
+
+  //     if (forImages) {
+  //       setImages([...images, data.secure_url]);
+  //     } else {
+  //       setImage(data.secure_url);
+  //     }
+  //     toast.success('Image uploaded successfully. click Update to apply it');
+  //   } catch (err) {
+  //     toast.error(getError(err));
+  //     dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
+  //   }
+  // };
   const uploadFileHandler = async (e, forImages) => {
     const file = e.target.files[0];
     const bodyFormData = new FormData();
@@ -136,12 +166,27 @@ export default function PostEditScreen() {
       } else {
         setImage(data.secure_url);
       }
+
+      // Create a FileReader object
+      const reader = new FileReader();
+
+      // Set the image source when the reader loads the image
+      reader.onload = function (e) {
+        const imgPreview = document.getElementById('img-preview');
+        imgPreview.src = e.target.result;
+        imgPreview.style.display = 'block';
+      };
+
+      // Read the image data as a URL
+      reader.readAsDataURL(file);
+
       toast.success('Image uploaded successfully. click Update to apply it');
     } catch (err) {
       toast.error(getError(err));
       dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
     }
   };
+
   const deleteFileHandler = async (fileName, f) => {
     console.log(fileName, f);
     console.log(images);
@@ -154,6 +199,7 @@ export default function PostEditScreen() {
       <Helmet>
         <title>Edit Post ${postId}</title>
       </Helmet>
+      <Card></Card>
       <h1>Edit Post {postId}</h1>
 
       {loading ? (
@@ -163,7 +209,7 @@ export default function PostEditScreen() {
       ) : (
         <Form onSubmit={submitHandler}>
           <Form.Group className="mb-3" controlId="name">
-            <Form.Label>Caption</Form.Label>
+            <Form.Label>Add A Caption</Form.Label>
             <Form.Control
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
@@ -179,10 +225,23 @@ export default function PostEditScreen() {
               required
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="imageFile">
+          {/* <Form.Group className="mb-3" controlId="imageFile">
             <Form.Label>Upload Image</Form.Label>
             <Form.Control type="file" onChange={uploadFileHandler} />
             {loadingUpload && <LoadingBox></LoadingBox>}
+          </Form.Group> */}
+          <Form.Group className="mb-3" controlId="imageFile">
+            <Form.Label>Upload Image</Form.Label>
+            <Form.Control
+              type="file"
+              onChange={(e) => uploadFileHandler(e, false)}
+            />
+            {loadingUpload && <LoadingBox></LoadingBox>}
+            <img
+              id="img-preview"
+              alt="Image preview"
+              style={{ display: 'none', maxWidth: '50%', marginTop: '10px' }}
+            />
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="additionalImage">
@@ -216,13 +275,29 @@ export default function PostEditScreen() {
               required
             />
           </Form.Group>
+
           <Form.Group className="mb-3" controlId="type">
             <Form.Label>Type</Form.Label>
-            <Form.Control
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              required
-            />
+            <ButtonGroup>
+              <Button
+                variant={type === 'complain' ? 'primary' : 'outline-primary'}
+                onClick={() => setType('complain')}
+              >
+                Complain
+              </Button>
+              <Button
+                variant={type === 'compliment' ? 'primary' : 'outline-primary'}
+                onClick={() => setType('compliment')}
+              >
+                Compliment
+              </Button>
+              <Button
+                variant={type === 'other' ? 'primary' : 'outline-primary'}
+                onClick={() => setType('other')}
+              >
+                Other
+              </Button>
+            </ButtonGroup>
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="location">

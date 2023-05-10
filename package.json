@@ -17,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/basir/mern-amazona/issues"
   },
-  "homepage": "https://github.com/basir/mern-amazona#readme"
+  "homepage": "https://github.com/basir/mern-amazona#readme",
+  "dependencies": {
+    "react-icons": "^4.8.0",
+    "react-intersection-observer": "^9.4.3"
+  }
 }

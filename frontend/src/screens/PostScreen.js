@@ -45,6 +45,9 @@ function PostScreen() {
   const [rating, setRating] = useState(0);
   const [selectedImage, setSelectedImage] = useState('');
 
+  const [isDescriptionVisible, setDescriptionVisible] = useState(true);
+  const [isReviewsVisible, setReviewsVisible] = useState(false);
+
   // todo
   const [comment, setComment] = useState([]);
   const [filteredComments, setFilteredComments] = useState([]);
@@ -86,6 +89,23 @@ function PostScreen() {
   }
 
   // todo........................
+
+  // function handleFilterComments(sentiment) {
+  //   setShowAllComments(false);
+  //   const filtered = post.reviews.filter((review) => {
+  //     const score = analyzeSentiment(review.comment);
+  //     return sentiment > 0 ? score > 0 : score < 0;
+  //   });
+  //   setFilteredComments(filtered);
+  // }
+
+  // function handleShowAllComment() {
+  //   setShowAllComments(true);
+  //   setFilteredComments([]);
+  // }
+  const [isAllCommentsSelected] = useState(false);
+  const [isPositiveSelected] = useState(false);
+  const [isNegativeSelected] = useState(false);
 
   function handleFilterComments(sentiment) {
     setShowAllComments(false);
@@ -136,6 +156,17 @@ function PostScreen() {
       dispatch({ type: 'CREATE_FAIL' });
     }
   };
+
+  const handleDescClick = () => {
+    setDescriptionVisible(true);
+    setReviewsVisible(false);
+  };
+
+  const handleReviewsClick = () => {
+    setDescriptionVisible(false);
+    setReviewsVisible(true);
+  };
+
   return loading ? (
     <LoadingBox />
   ) : error ? (
@@ -148,23 +179,27 @@ function PostScreen() {
             className="img-large"
             src={selectedImage || post.image}
             alt={post.caption}
+            style={{ height: '600px' }}
           ></img>
         </Col>
         <Col md={3}>
           <ListGroup variant="flush">
             <ListGroup.Item>
+              <h5 style={{ color: '#007BFF' }}>Title</h5>
+
               <Helmet>
                 <title>{post.caption}</title>
               </Helmet>
-              <h1>{post.caption}</h1>
+              <h3 style={{ color: '#939393' }}>{post.caption}</h3>
             </ListGroup.Item>
+            <br />
             <ListGroup.Item>
               <Rating
                 rating={post.rating}
                 numReviews={post.numReviews}
               ></Rating>
             </ListGroup.Item>
-            {/* <ListGroup.Item>Pirce : ${product.price}</ListGroup.Item> */}
+            <br />
             <ListGroup.Item>
               <Row xs={1} md={2} className="g-2">
                 {[post.image, ...post.images].map((x) => (
@@ -176,7 +211,12 @@ function PostScreen() {
                         variant="light"
                         onClick={() => setSelectedImage(x)}
                       >
-                        <Card.Img variant="top" src={x} alt="post" />
+                        <Card.Img
+                          variant="top"
+                          src={x}
+                          alt="post"
+                          style={{ width: '100px', height: '150px' }}
+                        />
                       </Button>
                     </Card>
                   </Col>
@@ -184,8 +224,27 @@ function PostScreen() {
               </Row>
             </ListGroup.Item>
             <ListGroup.Item>
-              Description:
-              <p>{post.description}</p>
+              <h4
+                style={{
+                  fontFamily: "'Poppins', sans-serif",
+                  fontWeight: 400,
+                  fontSize: '40px',
+                }}
+              >
+                Description
+              </h4>
+
+              <p
+                style={{
+                  color: '#999999',
+                  fontFamily: "'Poppins', sans-serif",
+                  fontWeight: 400,
+                  fontSize: '16px',
+                }}
+              >
+                {post.description.split(' ').slice(0, 30).join(' ')}
+                {post.description.split(' ').length > 30 ? '...' : ''}
+              </p>
             </ListGroup.Item>
           </ListGroup>
         </Col>
@@ -195,7 +254,7 @@ function PostScreen() {
               <ListGroup variant="flush">
                 <ListGroup.Item>
                   <Row>
-                    <Col>location:</Col>
+                    <Col style={{ color: '#007BFF' }}>location:</Col>
                     <Col>
                       <Badge bg="primary">{post.location} </Badge>
                     </Col>
@@ -207,117 +266,373 @@ function PostScreen() {
                       <Col>Type:</Col>
                       <br />
                     </div>
-                    {post.type === 'complain' ? (
-                      <Badge bg="danger">Complain</Badge>
-                    ) : (
-                      <Badge bg="success">Compliment</Badge>
-                    )}
+
+                    <br />
+
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '50px',
+                        backgroundColor: '#FFFFFF',
+                        color: '#9D9D9D',
+                        boxShadow:
+                          post.type === 'complain'
+                            ? '2px 2px 10px rgba(210, 5, 5, 0.45)'
+                            : post.type === 'compliment'
+                            ? '2px 2px 10px rgba(5, 210, 111, 0.45)'
+                            : '2px 2px 10px rgba(0, 123, 255, 0.45)',
+                        textAlign: 'center',
+                        lineHeight: '50px',
+                        fontWeight: '400',
+                        fontFamily: "'Poppins', sans-serif",
+                        fontSize: '16px',
+                        borderRadius: '10px',
+                      }}
+                    >
+                      {post.type === 'complain'
+                        ? 'Complain'
+                        : post.type === 'compliment'
+                        ? 'Compliment'
+                        : 'Unknown Type'}
+                    </div>
                   </Row>
                 </ListGroup.Item>
-
-                {/* {product.countInStock > 0 && (
-                  <ListGroup.Item>
-                    <div className="d-grid">
-                      <Button onClick={addToCartHandler} variant="primary">
-                        Add to Cart
-                      </Button>
-                    </div>
-                  </ListGroup.Item>
-                )} */}
               </ListGroup>
             </Card.Body>
           </Card>
         </Col>
       </Row>
 
-      <div className="my-3">
-        <h2 ref={reviewsRef}>Reviews</h2>
-        <div className="mb-3">
-          {post.reviews.length === 0 && (
-            <MessageBox>There is no review</MessageBox>
-          )}
+      <Card>
+        <Card.Body>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <h2
+              onClick={handleDescClick}
+              style={{
+                marginRight: '16px',
+                color: isDescriptionVisible ? '#007BFF' : 'inherit',
+              }}
+            >
+              Description
+            </h2>
+            <h2
+              onClick={handleReviewsClick}
+              style={{ color: isReviewsVisible ? '#007BFF' : 'inherit' }}
+            >
+              Reviews
+            </h2>
+          </div>
 
           <div>
-            <Button onClick={() => handleFilterComments(1)}>
-              Show Positive Comments
-            </Button>
-            <Button onClick={() => handleFilterComments(-1)}>
-              Show Negative Comments
-            </Button>
-            <Button onClick={handleShowAllComment}>Show All Comments</Button>
-          </div>
-        </div>
-        <ListGroup>
-          {showAllComments
-            ? post.reviews.map((review) => (
-                <ListGroup.Item key={review._id}>
-                  <strong>{review.name}</strong>
-                  <Rating rating={review.rating} caption=" "></Rating>
-                  <p>{review.createdAt.substring(0, 10)}</p>
-                  <p>{review.comment}</p>
-                  <p>Sentiment Score: {analyzeSentiment(review.comment)}</p>
-                </ListGroup.Item>
-              ))
-            : filteredComments.map((review) => (
-                <ListGroup.Item key={review._id}>
-                  <strong>{review.name}</strong>
-                  <Rating rating={review.rating} caption=" "></Rating>
-                  <p>{review.createdAt.substring(0, 10)}</p>
-                  <h4>{review.name}</h4>
-                  <p>{review.comment}</p>
-                  <p>Sentiment Score: {analyzeSentiment(review.comment)}</p>
-                </ListGroup.Item>
-              ))}
-        </ListGroup>
-
-        <div className="my-3">
-          {userInfo ? (
-            <form onSubmit={submitHandler}>
-              <h2>Write a customer review</h2>
-              <Form.Group className="mb-3" controlId="rating">
-                <Form.Label>Rating</Form.Label>
-                <Form.Select
-                  aria-label="Rating"
-                  value={rating}
-                  onChange={(e) => setRating(e.target.value)}
-                >
-                  <option value="">Select...</option>
-                  <option value="1">1- Poor</option>
-                  <option value="2">2- Fair</option>
-                  <option value="3">3- Good</option>
-                  <option value="4">4- Very good</option>
-                  <option value="5">5- Excelent</option>
-                </Form.Select>
-              </Form.Group>
-              <FloatingLabel
-                controlId="floatingTextarea"
-                label="Comments"
-                className="mb-3"
+            <div
+              className={`my-3 ${isDescriptionVisible ? 'd-block' : 'd-none'}`}
+            >
+              <p
+                style={{
+                  color: '#999999',
+                  fontFamily: "'Poppins', sans-serif",
+                  fontWeight: 400,
+                  fontSize: '16px',
+                }}
               >
-                <Form.Control
-                  as="textarea"
-                  placeholder="Leave a comment here"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                />
-              </FloatingLabel>
+                {post.description}
+              </p>
+            </div>
+          </div>
 
+          <div className="my-3">
+            <div className={`my-3 ${isReviewsVisible ? 'd-block' : 'd-none'}`}>
               <div className="mb-3">
-                <Button disabled={loadingCreateReview} type="submit">
-                  Submit
-                </Button>
-                {loadingCreateReview && <LoadingBox></LoadingBox>}
+                {post.reviews.length === 0 && (
+                  <MessageBox>There is no review</MessageBox>
+                )}
+
+                <div>
+                  <Button
+                    bg="white"
+                    style={{
+                      backgroundColor: isAllCommentsSelected ? '#007BFF' : '',
+                      color: '#C0C0C0',
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      textShadow: '0.5px 1px 1px #fff',
+                      border: isNegativeSelected ? '1px solid #999' : 'none',
+                      borderRadius: '5px',
+                    }}
+                    onClick={handleShowAllComment}
+                  >
+                    Show All Comments
+                  </Button>
+                  <Button
+                    style={{
+                      backgroundColor: isPositiveSelected ? '#007BFF' : '',
+                      color: '#C0C0C0',
+                      fontFamily: "'Inter', sans-serif",
+                      fontWeight: '500',
+                      fontSize: '16px',
+                      textShadow: '0.5px 1px 1px #fff',
+                      border: isNegativeSelected ? '1px solid #999' : 'none',
+                      borderRadius: '5px',
+                    }}
+                    onClick={() => handleFilterComments(1)}
+                  >
+                    Show Positive Comments
+                  </Button>
+                  <Button
+                    style={{
+                      backgroundColor: isNegativeSelected ? '#007BFF' : '',
+                      color: '#C0C0C0',
+                      fontFamily: "'Inter', sans-serif",
+                      fontWeight: '500',
+                      fontSize: '16px',
+                      textShadow: '0.5px 1px 1px #fff',
+                      border: isNegativeSelected ? '1px solid #999' : 'none',
+                      borderRadius: '5px',
+                    }}
+                    onClick={() => handleFilterComments(-1)}
+                  >
+                    Show Negative Comments
+                  </Button>
+                </div>
               </div>
-            </form>
-          ) : (
-            <MessageBox>
-              Please{' '}
-              <Link to={`/signin?redirect=/post/${post.id}`}>Sign In</Link> to
-              write a review
-            </MessageBox>
-          )}
-        </div>
-      </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div style={{ width: '65%', paddingRight: 15 }}>
+                  <ListGroup>
+                    {showAllComments
+                      ? post.reviews.map((review) => (
+                          <ListGroup.Item
+                            key={review._id}
+                            style={{
+                              borderBottom: '1px solid #909090',
+                              paddingTop: '15px',
+                              borderLeft: 'none',
+                              borderRight: 'none',
+                              borderTop: 'none',
+                            }}
+                          >
+                            <Row>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                }}
+                              >
+                                <div style={{ width: '100px' }}>
+                                  <strong
+                                    style={{
+                                      fontFamily: "'Inter', sans-serif",
+                                      fontWeight: 'bold',
+                                      fontSize: '18px',
+                                      color: '#706E84',
+                                    }}
+                                  >
+                                    {review.name}
+                                  </strong>
+                                </div>
+                                <Col>
+                                  <p
+                                    style={{
+                                      fontFamily: "'Inter', sans-serif",
+                                      fontWeight: 'bold',
+                                      fontSize: '16px',
+                                      color: '#82909A',
+                                      // add some left margin
+                                    }}
+                                  >
+                                    {review.createdAt.substring(0, 10)}
+                                  </p>
+
+                                  <p
+                                    style={{
+                                      fontFamily: "'Inter', sans-serif",
+                                      fontWeight: 'semi bold',
+                                      fontSize: '16px',
+                                      color: '#B4B4B4',
+                                    }}
+                                  >
+                                    {review.comment}
+                                  </p>
+                                  {/* <p>
+                          Sentiment Score: {analyzeSentiment(review.comment)}
+                        </p> */}
+                                  <Rating
+                                    rating={review.rating}
+                                    caption="Rating"
+                                    style={{
+                                      fontFamily: "'Inter', sans-serif",
+                                      fontWeight: 'bold',
+                                      fontSize: '14px',
+                                      color: '#BDBDBD',
+                                    }}
+                                  ></Rating>
+                                </Col>
+                              </div>
+                            </Row>
+                          </ListGroup.Item>
+                        ))
+                      : filteredComments.map((review) => (
+                          <ListGroup.Item
+                            key={review._id}
+                            style={{
+                              borderBottom: '1px solid #909090',
+                              paddingTop: '15px',
+                              borderLeft: 'none',
+                              borderRight: 'none',
+                              borderTop: 'none',
+                            }}
+                          >
+                            <Row>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                }}
+                              >
+                                <div style={{ width: '100px' }}>
+                                  <strong
+                                    style={{
+                                      fontFamily: "'Inter', sans-serif",
+                                      fontWeight: 'bold',
+                                      fontSize: '18px',
+                                      color: '#706E84',
+                                    }}
+                                  >
+                                    {review.name}
+                                  </strong>
+                                </div>
+                                <Col>
+                                  <p
+                                    style={{
+                                      fontFamily: "'Inter', sans-serif",
+                                      fontWeight: 'bold',
+                                      fontSize: '16px',
+                                      color: '#82909A',
+                                      // add some left margin
+                                    }}
+                                  >
+                                    {review.createdAt.substring(0, 10)}
+                                  </p>
+
+                                  <p
+                                    style={{
+                                      fontFamily: "'Inter', sans-serif",
+                                      fontWeight: 'semi bold',
+                                      fontSize: '16px',
+                                      color: '#B4B4B4',
+                                    }}
+                                  >
+                                    {review.comment}
+                                  </p>
+                                  {/* <p>
+                          Sentiment Score: {analyzeSentiment(review.comment)}
+                        </p> */}
+                                  <Rating
+                                    rating={review.rating}
+                                    caption="Rating"
+                                    style={{
+                                      fontFamily: "'Inter', sans-serif",
+                                      fontWeight: 'bold',
+                                      fontSize: '14px',
+                                      color: '#BDBDBD',
+                                    }}
+                                  ></Rating>
+                                </Col>
+                              </div>
+                            </Row>
+                          </ListGroup.Item>
+                        ))}
+                  </ListGroup>
+                </div>
+                <div style={{ width: '35%' }}>
+                  {userInfo ? (
+                    <form onSubmit={submitHandler}>
+                      <h2
+                        style={{
+                          fontFamily: "'Inter', sans-serif",
+                          fontWeight: 'bold',
+                          fontSize: '20px',
+                          color: '#324959',
+                        }}
+                      >
+                        Write a customer review
+                      </h2>
+                      <Form.Group className="mb-3" controlId="rating">
+                        <Form.Label>Rating</Form.Label>
+                        <Form.Select
+                          aria-label="Rating"
+                          value={rating}
+                          onChange={(e) => setRating(e.target.value)}
+                        >
+                          <option value="">Select...</option>
+                          <option value="1">1- Poor</option>
+                          <option value="2">2- Fair</option>
+                          <option value="3">3- Good</option>
+                          <option value="4">4- Very good</option>
+                          <option value="5">5- Excelent</option>
+                        </Form.Select>
+                      </Form.Group>
+                      <FloatingLabel
+                        controlId="floatingTextarea"
+                        label="Write Your Comment..."
+                        className="mb-3"
+                        style={{
+                          fontFamily: "'Inter', sans-serif",
+                          fontWeight: '400',
+                          fontSize: '14px',
+                        }}
+                      >
+                        <Form.Control
+                          as="textarea"
+                          placeholder="Leave a comment here"
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
+                        />
+                      </FloatingLabel>
+
+                      <div className="mb-3">
+                        <Button
+                          disabled={loadingCreateReview}
+                          type="submit"
+                          style={{
+                            width: '100%',
+                            background:
+                              'linear-gradient(to bottom, #6CA9EA, #007BFF)',
+                            border: 'none',
+                            borderRadius: '4px',
+                            padding: '10px',
+                            color: '#fff',
+                            fontFamily: "'Poppins', sans-serif",
+                            fontWeight: '400',
+                            fontSize: '16px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Submit
+                        </Button>
+                        {loadingCreateReview && <LoadingBox></LoadingBox>}
+                      </div>
+                    </form>
+                  ) : (
+                    <MessageBox>
+                      Please{' '}
+                      <Link to={`/signin?redirect=/post/${post.id}`}>
+                        Sign In
+                      </Link>{' '}
+                      to write a review
+                    </MessageBox>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card.Body>
+      </Card>
     </div>
   );
 }

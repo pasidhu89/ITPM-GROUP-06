@@ -1,6 +1,7 @@
 import express from 'express';
 import expressAsyncHandler from 'express-async-handler';
 import Post from '../models/postModel.js';
+import User from '../models/userModel.js';
 import { isAuth, isAdmin } from '../utils.js';
 
 const postRouter = express.Router();
@@ -13,9 +14,10 @@ postRouter.get('/', async (req, res) => {
 postRouter.post(
   '/',
   isAuth,
-  isAdmin,
+  // isAdmin,
   expressAsyncHandler(async (req, res) => {
     const newPost = new Post({
+      // email:"samples@example.com",
       caption: 'sample name ' + Date.now(),
       image: '/images/p1.jpg',
       description: 'sample description',
@@ -32,7 +34,7 @@ postRouter.post(
 postRouter.put(
   '/:id',
   isAuth,
-  isAdmin,
+  //  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const postId = req.params.id;
     const post = await Post.findById(postId);
@@ -107,7 +109,7 @@ const PAGE_SIZE = 10;
 postRouter.get(
   '/admin',
   isAuth,
-  isAdmin,
+  // isAdmin,
   expressAsyncHandler(async (req, res) => {
     const { query } = req;
     const page = query.page || 1;
@@ -135,6 +137,7 @@ postRouter.get(
     const type = query.type || '';
     const rating = query.rating || '';
     const searchQuery = query.query || '';
+    const order = query.order || '';
 
     const queryFilter =
       searchQuery && searchQuery !== 'all'
@@ -201,6 +204,16 @@ postRouter.get(
   isAuth,
   isAdmin,
   expressAsyncHandler(async (req, res) => {
+
+    const users = await User.aggregate([
+      {
+        $group: {
+          _id: null,
+          numUsers: { $sum: 1 },
+        },
+      },
+    ]);
+
     const types = await Post.aggregate([
       {
         $group: {
@@ -209,7 +222,7 @@ postRouter.get(
         },
       },
     ]);
-    res.send({ types });
+    res.send({users,types });
   })
 );
 

@@ -18,6 +18,7 @@ const postSchema = new mongoose.Schema(
     description: { type: String, required: true },
     type: { type: String, required: true },
     location: { type: String, required: true },
+    // email: { type: String, required: true, unique: true },
 
     rating: { type: Number, required: true },
     numReviews: { type: Number, required: true },

@@ -78,6 +78,7 @@ export default function PostListScreen() {
   const { userInfo } = state;
 // todo....................................................................................
   useEffect(() => {
+    console.log(userInfo);
     const fetchData = async () => {
       try {
         const { data } = await axios.get(`/api/posts/admin?page=${page} `, {

@@ -93,15 +93,61 @@ export default function PostDashboardScreen() {
   const { state } = useContext(Store);
   const { userInfo } = state;
   // todo....................................................................................
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const { data } = await axios.get(`/api/posts/admin?page=${page} `, {
+  //         headers: { Authorization: `Bearer ${userInfo.token}` },
+  //       });
+
+  //       dispatch({ type: 'FETCH_SUCCESS', payload: data });
+  //     } catch (err) {}
+  //   };
+
+  //   if (successDelete) {
+  //     dispatch({ type: 'DELETE_RESET' });
+  //   } else {
+  //     fetchData();
+  //   }
+  // }, [page, userInfo, successDelete]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const { data } = await axios.get('/api/posts/summary', {
+  //         headers: { Authorization: `Bearer ${userInfo.token}` },
+  //       });
+  //       dispatch({ type: 'PIE_FETCH_SUCCESS', payload: data });
+  //     } catch (err) {
+  //       dispatch({
+  //         type: 'PIE_FETCH_FAIL',
+  //         payload: getError(err),
+  //       });
+  //     }
+  //   };
+  //   fetchData();
+  // }, [userInfo]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`/api/posts/admin?page=${page} `, {
-          headers: { Authorization: `Bearer ${userInfo.token}` },
-        });
+        const [adminResponse, summaryResponse] = await Promise.all([
+          axios.get(`/api/posts/admin?page=${page}`, {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }),
+          axios.get('/api/posts/summary', {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }),
+        ]);
 
-        dispatch({ type: 'FETCH_SUCCESS', payload: data });
-      } catch (err) {}
+        dispatch({ type: 'FETCH_SUCCESS', payload: adminResponse.data });
+        dispatch({ type: 'PIE_FETCH_SUCCESS', payload: summaryResponse.data });
+      } catch (err) {
+        dispatch({
+          type: 'PIE_FETCH_FAIL',
+          payload: getError(err),
+        });
+      }
     };
 
     if (successDelete) {
@@ -110,46 +156,6 @@ export default function PostDashboardScreen() {
       fetchData();
     }
   }, [page, userInfo, successDelete]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axios.get('/api/posts/summary', {
-          headers: { Authorization: `Bearer ${userInfo.token}` },
-        });
-        dispatch({ type: 'PIE_FETCH_SUCCESS', payload: data });
-      } catch (err) {
-        dispatch({
-          type: 'PIE_FETCH_FAIL',
-          payload: getError(err),
-        });
-      }
-    };
-    fetchData();
-  }, [userInfo]);
-
-  const createHandler = async () => {
-    if (window.confirm('Are you sure to create?')) {
-      try {
-        dispatch({ type: 'CREATE_REQUEST' });
-        const { data } = await axios.post(
-          '/api/posts',
-          {},
-          {
-            headers: { Authorization: `Bearer ${userInfo.token}` },
-          }
-        );
-        toast.success('post created successfully');
-        dispatch({ type: 'CREATE_SUCCESS' });
-        navigate(`/userpost/${data.post._id}`);
-      } catch (err) {
-        toast.error(getError(error));
-        dispatch({
-          type: 'CREATE_FAIL',
-        });
-      }
-    }
-  };
 
   const deleteHandler = async (post) => {
     if (window.confirm('Are you sure to delete?')) {
@@ -176,13 +182,6 @@ export default function PostDashboardScreen() {
         <Col>
           <h1>Posts</h1>
         </Col>
-        <Col className="col text-end">
-          <div>
-            <Button type="button" onClick={createHandler}>
-              Create Post
-            </Button>
-          </div>
-        </Col>
       </Row>
 
       {loadingCreate && <LoadingBox></LoadingBox>}
@@ -194,6 +193,24 @@ export default function PostDashboardScreen() {
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
         <>
+          <Row>
+            <Col md={4}>
+              <Card>
+                <Card.Body>
+                  <Card.Title>
+                    {summary.users && summary.users[0]
+                      ? summary.users[0].numUsers
+                      : 0}
+                  </Card.Title>
+                  <Card.Text> Users</Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+
+          <br />
+          <br />
+
           <table className="table">
             <thead>
               <tr>
@@ -258,6 +275,20 @@ export default function PostDashboardScreen() {
                   ['Type', 'Posts'],
                   ...summary.types.map((x) => [x._id, x.count]),
                 ]}
+                options={{
+                  pieHole: 0.5,
+                  colors: [
+                    '#A1DC67',
+                    '#39CEF3',
+                    '#FF4906',
+                    '#33FF9F',
+                    '#FF5722',
+                  ],
+                  // slices: {
+                  //   0: { offset: 0.1 }, // add 10% offset to the first slice
+                  //   1: { offset: 0.05 }, // add 5% offset to the second slice
+                  // },
+                }}
               ></Chart>
             )}
           </div>

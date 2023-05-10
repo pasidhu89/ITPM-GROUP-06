@@ -10,7 +10,8 @@ import Rating from '../components/Rating';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import Button from 'react-bootstrap/Button';
-import Product from '../components/Product';
+//import Product from '../components/Product';
+import Post from '../components/Post';
 import LinkContainer from 'react-router-bootstrap/LinkContainer';
 
 const reducer = (state, action) => {
@@ -20,10 +21,12 @@ const reducer = (state, action) => {
     case 'FETCH_SUCCESS':
       return {
         ...state,
-        products: action.payload.products,
+        //products: action.payload.products,
+        posts: action.payload.posts,
         page: action.payload.page,
         pages: action.payload.pages,
-        countProducts: action.payload.countProducts,
+        //countProducts: action.payload.countProducts,
+        countPosts: action.payload.countPosts,
         loading: false,
       };
     case 'FETCH_FAIL':
@@ -34,20 +37,20 @@ const reducer = (state, action) => {
   }
 };
 
-const prices = [
-  {
-    name: '$1 to $50',
-    value: '1-50',
-  },
-  {
-    name: '$51 to $200',
-    value: '51-200',
-  },
-  {
-    name: '$201 to $1000',
-    value: '201-1000',
-  },
-];
+// const prices = [
+//   {
+//     name: '$1 to $50',
+//     value: '1-50',
+//   },
+//   {
+//     name: '$51 to $200',
+//     value: '51-200',
+//   },
+//   {
+//     name: '$201 to $1000',
+//     value: '201-1000',
+//   },
+// ];
 
 export const ratings = [
   {
@@ -75,24 +78,29 @@ export default function SearchScreen() {
   const navigate = useNavigate();
   const { search } = useLocation();
   const sp = new URLSearchParams(search); // /search?category=Shirts
-  const category = sp.get('category') || 'all';
+  //const category = sp.get('category') || 'all';
   const query = sp.get('query') || 'all';
   const price = sp.get('price') || 'all';
   const rating = sp.get('rating') || 'all';
   const order = sp.get('order') || 'newest';
   const page = sp.get('page') || 1;
+  const type = sp.get('type') || 'all';
 
-  const [{ loading, error, products, pages, countProducts }, dispatch] =
-    useReducer(reducer, {
+  //const [{ loading, error, products, pages, countProducts }, dispatch] =
+  const [{ loading, error, posts, pages, countPosts }, dispatch] = useReducer(
+    reducer,
+    {
       loading: true,
       error: '',
-    });
+    }
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(
-          `/api/products/search?page=${page}&query=${query}&category=${category}&price=${price}&rating=${rating}&order=${order}`
+          //`/api/products/search?page=${page}&query=${query}&category=${category}&price=${price}&rating=${rating}&order=${order}`
+          `/api/posts/search?page=${page}&query=${query}&rating=${rating}&order=${order}&type=${type}`
         );
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (err) {
@@ -103,41 +111,57 @@ export default function SearchScreen() {
       }
     };
     fetchData();
-  }, [category, error, order, page, price, query, rating]);
+    // }, [category, error, order, page, price, query, rating]);
+  }, [type, error, order, page, price, query, rating]);
 
-  const [categories, setCategories] = useState([]);
+  // const [categories, setCategories] = useState([]);
+  // useEffect(() => {
+  //   const fetchCategories = async () => {
+  //     try {
+  //       const { data } = await axios.get(`/api/products/categories`);
+  //       setCategories(data);
+  //     } catch (err) {
+  //       toast.error(getError(err));
+  //     }
+  //   };
+  //   fetchCategories();
+  // }, [dispatch]);
+
+  const [types, setTypes] = useState([]);
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchTypes = async () => {
       try {
-        const { data } = await axios.get(`/api/products/categories`);
-        setCategories(data);
+        const { data } = await axios.get(`/api/posts/types`);
+        setTypes(data);
       } catch (err) {
         toast.error(getError(err));
       }
     };
-    fetchCategories();
+    fetchTypes();
   }, [dispatch]);
 
   const getFilterUrl = (filter, skipPathname) => {
     const filterPage = filter.page || page;
-    const filterCategory = filter.category || category;
+    // const filterCategory = filter.category || category;
+    const filterType = filter.type || type;
     const filterQuery = filter.query || query;
     const filterRating = filter.rating || rating;
     const filterPrice = filter.price || price;
     const sortOrder = filter.order || order;
     return `${
       skipPathname ? '' : '/search?'
-    }category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
+      //  }category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
+    }type=${filterType}&query=${filterQuery}&price=${filterPrice}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
   };
   return (
     <div>
       <Helmet>
-        <title>Search Products</title>
+        <title>Search Posts</title>
       </Helmet>
       <Row>
         <Col md={3}>
           <h3>Department</h3>
-          <div>
+          {/* <div>
             <ul>
               <li>
                 <Link
@@ -158,8 +182,30 @@ export default function SearchScreen() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
           <div>
+            <ul>
+              <li>
+                <Link
+                  className={'all' === type ? 'text-bold' : ''}
+                  to={getFilterUrl({ type: 'all' })}
+                >
+                  Any
+                </Link>
+              </li>
+              {types.map((c) => (
+                <li key={c}>
+                  <Link
+                    className={c === type ? 'text-bold' : ''}
+                    to={getFilterUrl({ type: c })}
+                  >
+                    {c}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          {/* <div>
             <h3>Price</h3>
             <ul>
               <li>
@@ -181,7 +227,7 @@ export default function SearchScreen() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
           <div>
             <h3>Avg. Customer Review</h3>
             <ul>
@@ -216,13 +262,16 @@ export default function SearchScreen() {
               <Row className="justify-content-between mb-3">
                 <Col md={6}>
                   <div>
-                    {countProducts === 0 ? 'No' : countProducts} Results
+                    {/* {countProducts === 0 ? 'No' : countProducts} Results */}
+                    {countPosts === 0 ? 'No' : countPosts} Results
                     {query !== 'all' && ' : ' + query}
-                    {category !== 'all' && ' : ' + category}
+                    {/* {category !== 'all' && ' : ' + category} */}
+                    {type !== 'all' && ' : ' + type}
                     {price !== 'all' && ' : Price ' + price}
                     {rating !== 'all' && ' : Rating ' + rating + ' & up'}
                     {query !== 'all' ||
-                    category !== 'all' ||
+                    // category !== 'all' ||
+                    type !== 'all' ||
                     rating !== 'all' ||
                     price !== 'all' ? (
                       <Button
@@ -234,7 +283,7 @@ export default function SearchScreen() {
                     ) : null}
                   </div>
                 </Col>
-                <Col className="text-end">
+                {/* <Col className="text-end">
                   Sort by{' '}
                   <select
                     value={order}
@@ -247,20 +296,28 @@ export default function SearchScreen() {
                     <option value="highest">Price: High to Low</option>
                     <option value="toprated">Avg. Customer Reviews</option>
                   </select>
-                </Col>
+                </Col> */}
               </Row>
-              {products.length === 0 && (
+              {/* {products.length === 0 && (
                 <MessageBox>No Product Found</MessageBox>
+              )} */}
+              {posts.length === 0 && (
+                <MessageBox>No Post Found</MessageBox>
               )}
-
-              <Row>
+              {/* <Row>
                 {products.map((product) => (
                   <Col sm={6} lg={4} className="mb-3" key={product._id}>
                     <Product product={product}></Product>
                   </Col>
                 ))}
+              </Row> */}
+              <Row>
+                {posts.map((post) => (
+                  <Col sm={6} lg={4} className="mb-3" key={post._id}>
+                    <Post post={post}></Post>
+                  </Col>
+                ))}
               </Row>
-
               <div>
                 {[...Array(pages).keys()].map((x) => (
                   <LinkContainer

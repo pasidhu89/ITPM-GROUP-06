@@ -1,6 +1,7 @@
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from './screens/ProductScreen';
 import Navbar from 'react-bootstrap/Navbar';
@@ -40,6 +41,8 @@ import ResetPasswordScreen from './screens/ResetPasswordScreen';
 import PostEditScreen from './screens/PostEditScreen';
 import PostListScreen from './screens/PostListScreen';
 import PostScreen from './screens/PostScreen';
+
+
 
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -104,6 +107,7 @@ function App() {
               >
                 <i className="fas fa-bars"></i>
               </Button>
+
 
               <LinkContainer to="/">
                 <Navbar.Brand>amazona</Navbar.Brand>
@@ -209,8 +213,7 @@ function App() {
         <main>
           <Container className="mt-3">
             <Routes>
-              
-              <Route path="/post/:id" element={< PostScreen/>} />
+              <Route path="/post/:id" element={<PostScreen />} />
               <Route path="/product/:slug" element={<ProductScreen />} />
               <Route path="/cart" element={<CartScreen />} />
               <Route path="/search" element={<SearchScreen />} />
@@ -338,7 +341,7 @@ function App() {
                   </AdminRoute>
                 }
               ></Route>
-
+              
               <Route path="/" element={<HomeScreen />} />
             </Routes>
           </Container>
