@@ -4,8 +4,10 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -moz-osx-font-smoothing: grayscale; 
+  /* background-color: #f00; */
 }
+
 .site-container {
   min-height: 100vh;
 }
@@ -125,5 +127,3 @@ main {
 button.thumbnail {
   padding: 0;
 }
-
-
