@@ -293,7 +293,7 @@ function PostScreen() {
                         ? 'Complain'
                         : post.type === 'compliment'
                         ? 'Compliment'
-                        : 'Unknown Type'}
+                        : 'Other'}
                     </div>
                   </Row>
                 </ListGroup.Item>

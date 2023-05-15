@@ -301,9 +301,7 @@ export default function SearchScreen() {
               {/* {products.length === 0 && (
                 <MessageBox>No Product Found</MessageBox>
               )} */}
-              {posts.length === 0 && (
-                <MessageBox>No Post Found</MessageBox>
-              )}
+              {posts.length === 0 && <MessageBox>No Post Found</MessageBox>}
               {/* <Row>
                 {products.map((product) => (
                   <Col sm={6} lg={4} className="mb-3" key={product._id}>
@@ -311,13 +309,47 @@ export default function SearchScreen() {
                   </Col>
                 ))}
               </Row> */}
-              <Row>
-                {posts.map((post) => (
-                  <Col sm={6} lg={4} className="mb-3" key={post._id}>
-                    <Post post={post}></Post>
-                  </Col>
-                ))}
-              </Row>
+          <div
+          >
+            {console.log(posts)}
+            {posts.map((post) => (
+              <div
+             
+                key={post._id}
+                // className="mb-5"
+                className={`mb-5 ${
+                  posts.indexOf(post) % 2 === 0 ? 'post-even' : 'post-odd'
+                }`}
+                
+                style={{ paddingLeft: '40px',}}
+                // style={{ paddingLeft: '40px' }}
+              >
+                <Post
+                
+                  post={post}
+                  colClass={
+                    posts.indexOf(post) % 2 === 0 ? 'post-col' : 'post-col-alt'
+                  }
+                  titleClass={
+                    posts.indexOf(post) % 2 === 0
+                      ? 'post-title'
+                      : 'post-title-alt'
+                  }
+                  descriptionClass={
+                    posts.indexOf(post) % 2 === 0
+                    ? 'post-description'
+                    : 'post-description-alt'
+                } 
+                readmClass={
+                  posts.indexOf(post) % 2 === 0
+                  ? 'post-readm'
+                  : 'post-readm-alt'
+                }                  
+                
+                />
+              </div>
+            ))}
+          </div>
               <div>
                 {[...Array(pages).keys()].map((x) => (
                   <LinkContainer

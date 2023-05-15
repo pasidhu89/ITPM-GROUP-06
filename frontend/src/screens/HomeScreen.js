@@ -6,6 +6,7 @@ import Post from '../components/Post';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import axios from 'axios';
+import '../index.css';
 
 const HomeScreen = () => {
   const [posts, setPosts] = useState([]);
@@ -41,8 +42,9 @@ const HomeScreen = () => {
   return (
     <div>
       <Helmet>
-        <title>Amazona</title>
+        <title>travel Guard</title>
       </Helmet>
+
       <h1>Featured Posts</h1>
       <div className="posts">
         {loading ? (
@@ -50,16 +52,46 @@ const HomeScreen = () => {
         ) : error ? (
           <MessageBox variant="danger">{error}</MessageBox>
         ) : (
-          <Row>
-          {console.log(posts)}
-          {posts.map((post) => (
-            <Col key={post._id} sm={6} md={4} lg={3} className="mb-2">
-              <Post post={post} />
-            </Col>
-          ))}
-        </Row>
+          <div>
+            {console.log(posts)}
+            {posts.map((post) => (
+              <div
+                key={post._id}
+                // className="mb-5"
+                className={`mb-5 ${
+                  posts.indexOf(post) % 2 === 0 ? 'post-even' : 'post-odd'
+                }`}
+                style={{ paddingLeft: '40px' }}
+                // style={{ paddingLeft: '40px' }}
+              >
+                <Post
+                  post={post}
+                  colClass={
+                    posts.indexOf(post) % 2 === 0 ? 'post-col' : 'post-col-alt'
+                  }
+                  titleClass={
+                    posts.indexOf(post) % 2 === 0
+                      ? 'post-title'
+                      : 'post-title-alt'
+                  }
+                  descriptionClass={
+                    posts.indexOf(post) % 2 === 0
+                    ? 'post-description'
+                    : 'post-description-alt'
+                } 
+                readmClass={
+                  posts.indexOf(post) % 2 === 0
+                  ? 'post-readm'
+                  : 'post-readm-alt'
+                }                  
+                
+                />
+              </div>
+            ))}
+          </div>
         )}
       </div>
+
       <h1>Featured Products</h1>
       <div className="products">
         {loading ? (

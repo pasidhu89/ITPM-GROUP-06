@@ -201,8 +201,12 @@ export default function PostEditScreen() {
     toast.success('Image removed successfully. click Update to apply it');
   };
   return (
-    <Card style={{ borderRadius: '25px', boxShadow: '0px 0px 50px rgba(0, 0, 0, 0.35)' }}>
-
+    <Card
+      style={{
+        borderRadius: '25px',
+        boxShadow: '0px 0px 50px rgba(0, 0, 0, 0.35)',
+      }}
+    >
       <Helmet>
         <title>Edit Post ${postId}</title>
       </Helmet>
@@ -308,7 +312,7 @@ export default function PostEditScreen() {
                   <Form.Label
                     style={{
                       fontFamily: 'Public Sans,sans-serif',
-                      fontWeight: 'semibold',
+                      fontWeight: 'Semibold',
                       fontSize: '16px',
                       color: '#007BFF',
                     }}

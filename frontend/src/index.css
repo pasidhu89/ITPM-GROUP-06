@@ -4,7 +4,7 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; 
+  -moz-osx-font-smoothing: grayscale;
   /* background-color: #f00; */
 }
 
@@ -126,4 +126,79 @@ main {
 }
 button.thumbnail {
   padding: 0;
+}
+
+/* search bar */
+
+.search-bar {
+  border-radius: 200px;
+  overflow: hidden; /* This will make sure the search bar doesn't overflow */
+  width: 400px;
+  height: 50px;
+  overflow: hidden;
+  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.3);
+  border: none;
+}
+.search-bar .form-control {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+.search-bar button {
+  border: none;
+  height: 50px;
+}
+
+.search-bar button:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.post-col {
+  background-color: #ffffff;
+}
+.post-col-alt {
+  background-color: rgba(18, 17, 39, 0.75);
+}
+
+.post-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 20px;
+  color: #000000;
+  padding-bottom: 3px;
+}
+
+.post-title-alt {
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 20px;
+  color: #ededed;
+  padding-bottom: 3px;
+}
+.post-description {
+  font-family: 'Poppins', sans-serif;
+  font-weight: regular;
+  font-size: 16px;
+  color: #464646;
+}
+
+.post-description-alt {
+  font-family: 'Poppins', sans-serif;
+  font-weight: regular;
+  font-size: 16px;
+  color: #f6f6f6;
+}
+
+.post-readm {
+  font-family: 'Poppins', sans-serif;
+  font-weight: regular;
+  font-size: 16px;
+  color: #464646;
+}
+.post-readm-alt {
+  font-family: 'Poppins', sans-serif;
+  font-weight: regular;
+  font-size: 16px;
+  color: #b69efb;
 }

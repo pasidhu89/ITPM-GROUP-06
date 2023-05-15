@@ -1,7 +1,7 @@
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import './App.css';
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from './screens/ProductScreen';
 import Navbar from 'react-bootstrap/Navbar';
@@ -41,8 +41,6 @@ import ResetPasswordScreen from './screens/ResetPasswordScreen';
 import PostEditScreen from './screens/PostEditScreen';
 import PostListScreen from './screens/PostListScreen';
 import PostScreen from './screens/PostScreen';
-
-
 
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -87,6 +85,48 @@ function App() {
   return (
     <BrowserRouter>
       <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          backgroundImage: 'url(banner.png)',
+          backgroundSize: 'cover',
+        }}
+      >
+        <LinkContainer to="/" style={{ paddingRight: '0px' }}>
+          <img src="travel.png" alt="Travel Guard" height={60} />
+        </LinkContainer>
+        <div className="header" style={{ paddingRight: '180px' }}>
+          <LinkContainer to="/">
+            <Navbar.Brand>VISIT SRILANKA</Navbar.Brand>
+          </LinkContainer>
+        </div>
+        <div className="header">
+          <LinkContainer to="/">
+            <Navbar.Brand>BOOKINGS</Navbar.Brand>
+          </LinkContainer>
+        </div>
+        <div className="header">
+          <LinkContainer to="/">
+            <Navbar.Brand>TOURIST DIARIES</Navbar.Brand>
+          </LinkContainer>
+        </div>
+        <div className="header">
+          <LinkContainer to="/">
+            <Navbar.Brand>HOTELS</Navbar.Brand>
+          </LinkContainer>
+        </div>
+        <div className="header">
+          <LinkContainer to="/">
+            <Navbar.Brand>VEHICLES</Navbar.Brand>
+          </LinkContainer>
+        </div>
+        <div className="header">
+          <LinkContainer to="/">
+            <Navbar.Brand>EMERGENCY</Navbar.Brand>
+          </LinkContainer>
+        </div>
+      </div>
+      <div
         className={
           sidebarIsOpen
             ? fullBox
@@ -98,24 +138,26 @@ function App() {
         }
       >
         <ToastContainer position="bottom-center" limit={1} />
+
         <header>
-          <Navbar bg="dark" variant="dark" expand="lg">
+          <Navbar bg="light" variant="" expand="lg">
             <Container>
               <Button
-                variant="dark"
+                variant="light"
                 onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
               >
                 <i className="fas fa-bars"></i>
               </Button>
-
-
-              <LinkContainer to="/">
-                <Navbar.Brand>amazona</Navbar.Brand>
-              </LinkContainer>
+              <div style={{ paddingLeft: '8px' }}>
+                {' '}
+                <SearchBox />
+              </div>
               <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">
-                <SearchBox />
-                <Nav className="me-auto  w-100  justify-content-end">
+                <Nav
+                  className="me-auto  w-100  justify-content-end"
+                  style={{ height: '50px' }}
+                >
                   <Link to="/cart" className="nav-link">
                     Cart
                     {cart.cartItems.length > 0 && (
@@ -172,43 +214,137 @@ function App() {
               </Navbar.Collapse>
             </Container>
           </Navbar>
+          <br />
+
+          <div
+            className={
+              sidebarIsOpen
+                ? 'active-nav side-navbar d-flex justify-content-between flex-wrap flex-column'
+                : 'side-navbar d-flex justify-content-between flex-wrap flex-column'
+            }
+            style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: '30px',
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 1)',
+            }}
+          >
+            <Nav
+              className="flex-column text-white w-100 p-2"
+              style={{ borderRadius: '30px' }}
+            >
+              <div class="sidebar-logo">
+                <img src="logo.png" alt="Logo" />
+                <h1>Travel Guard</h1>
+              </div>
+
+              <div className="side-home">
+                <img src="home.png" alt="Home" />
+                Home
+              </div>
+              <br />
+              <div className="side-title">
+                <img
+                  src="service.png"
+                  alt="Service"
+                  style={{ paddingRight: '12px' }}
+                />
+                Services
+              </div>
+
+              <div style={{ paddingLeft: '25px' }}>
+                <div className="side-home">
+                  <img src="rides.png" alt="Rides" />
+                  Rides
+                </div>
+
+                <div className="side-home">
+                  <img src="hotels.png" alt="Hotels" />
+                  Hotels
+                </div>
+
+                <div className="side-home">
+                  <img src="alert.png" alt="Alert" />
+                  Emergency Numbers
+                </div>
+              </div>
+              {/* <Nav.Item>
+                <div className="side-home">
+                  <img src="service.png" alt="Service" />
+                  Categories
+                </div>
+              </Nav.Item>
+              {categories.map((category) => (
+                <Nav.Item key={category}>
+                  <LinkContainer
+                    to={{ pathname: '/search', search: `category=${category}` }}
+                    onClick={() => setSidebarIsOpen(false)}
+                  >
+                    <Nav.Link>{category}</Nav.Link>
+                  </LinkContainer>
+                </Nav.Item>
+              ))} */}
+              <br />
+              <Nav.Item>
+                <div className="side-title">
+                  <img
+                    src="service.png"
+                    alt="Service"
+                    style={{ paddingRight: '12px' }}
+                  />
+                  Travel Experience Types
+                </div>
+              </Nav.Item>
+              {/* {types.map((type) => (
+                <Nav.Item key={type}>
+                  <LinkContainer
+                    to={{ pathname: '/search', search: `category=${type}` }}
+                    onClick={() => setSidebarIsOpen(false)}
+                  >
+                    <Nav.Link>{type}</Nav.Link>
+                  </LinkContainer>
+                </Nav.Item>
+              ))} */}
+              <div style={{ paddingLeft: '25px' }}>
+                {types.map((type) => (
+                  <Nav.Item key={type}>
+                    <LinkContainer
+                      to={{ pathname: '/search', search: `category=${type}` }}
+                      onClick={() => setSidebarIsOpen(false)}
+                    >
+                      <Nav.Link className="post-type">
+                        {type === 'complain' ? (
+                          <img
+                            src="cancel.png"
+                            alt="Complain"
+                            style={{ marginRight: '8px' }}
+                          />
+                        ) : type === 'compliment' ? (
+                          <img
+                            src="accept.png"
+                            alt="Compliment"
+                            style={{ marginRight: '8px' }}
+                          />
+                        ) : (
+                          <img
+                            src="other.png"
+                            width={17}
+                            alt="Other"
+                            style={{ marginRight: '8px' }}
+                          />
+                        )}
+                        {type === 'complain'
+                          ? 'Negative Incidents'
+                          : type === 'compliment'
+                          ? 'Positive Incidents'
+                          : 'Other'}
+                      </Nav.Link>
+                    </LinkContainer>
+                  </Nav.Item>
+                ))}
+              </div>
+            </Nav>
+          </div>
         </header>
-        <div
-          className={
-            sidebarIsOpen
-              ? 'active-nav side-navbar d-flex justify-content-between flex-wrap flex-column'
-              : 'side-navbar d-flex justify-content-between flex-wrap flex-column'
-          }
-        >
-          <Nav className="flex-column text-white w-100 p-2">
-            <Nav.Item>
-              <strong>Categories</strong>
-            </Nav.Item>
-            {categories.map((category) => (
-              <Nav.Item key={category}>
-                <LinkContainer
-                  to={{ pathname: '/search', search: `category=${category}` }}
-                  onClick={() => setSidebarIsOpen(false)}
-                >
-                  <Nav.Link>{category}</Nav.Link>
-                </LinkContainer>
-              </Nav.Item>
-            ))}
-            <Nav.Item>
-              <strong>Types</strong>
-            </Nav.Item>
-            {types.map((type) => (
-              <Nav.Item key={type}>
-                <LinkContainer
-                  to={{ pathname: '/search', search: `category=${type}` }}
-                  onClick={() => setSidebarIsOpen(false)}
-                >
-                  <Nav.Link>{type}</Nav.Link>
-                </LinkContainer>
-              </Nav.Item>
-            ))}
-          </Nav>
-        </div>
 
         <main>
           <Container className="mt-3">
@@ -341,7 +477,7 @@ function App() {
                   </AdminRoute>
                 }
               ></Route>
-              
+
               <Route path="/" element={<HomeScreen />} />
             </Routes>
           </Container>

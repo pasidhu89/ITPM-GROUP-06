@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .App-logo {
@@ -38,8 +38,77 @@
   }
 }
 
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+}
 
-  
+.sidebar-logo img {
+  margin-right: 12px;
+}
 
-  
-  
+.sidebar-logo h1 {
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
+  font-size: 24px;
+  color: #324054;
+  padding-top: 12px;
+}
+
+.side-home {
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: Medium;
+  font-size: 16px;
+  color: #324054;
+  background-color: #ffffff;
+  height: 44px;
+}
+.side-home:hover {
+  background-color: #eff6ff;
+  color: #2d68fe;
+}
+.side-title {
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: Medium;
+  font-size: 16px;
+  color: #324054;
+  background-color: #ffffff;
+  height: 44px;
+}
+
+.side-home img {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+  margin-right: 12px;
+}
+
+.post-type {
+  align-items: center;
+  padding-left: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: Medium;
+  font-size: 16px;
+  color: #324054;
+  background-color: #ffffff;
+  height: 44px;
+}
+
+.post-type:hover {
+  background-color: #eff6ff;
+  color: #2d68fe;
+}
+
+.header {
+  font-family: 'Antonio', sans-serif;
+  font-weight: Medium;
+  font-size: 20px;
+  padding-top: 20px;
+}
