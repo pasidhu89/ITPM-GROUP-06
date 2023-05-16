@@ -21,7 +21,7 @@ postRouter.post(
       caption: 'sample name ' + Date.now(),
       image: '/images/p1.jpg',
       description: 'sample description',
-      type: 'sample category',
+      type: 'other',
       location: 'sample location',
       rating: 0,
       numReviews: 0,
@@ -222,7 +222,18 @@ postRouter.get(
         },
       },
     ]);
-    res.send({users,types });
+    const dailyPosts = await Post.aggregate([
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          complain: { $sum: { $cond: [{ $eq: ['$type', 'complain'] }, 1, 0] } },
+          compliment: { $sum: { $cond: [{ $eq: ['$type', 'compliment'] }, 1, 0] } },
+          other: { $sum: { $cond: [{ $eq: ['$type', 'other'] }, 1, 0] } }
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+    res.send({users,types,dailyPosts });
   })
 );
 

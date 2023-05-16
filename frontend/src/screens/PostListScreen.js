@@ -100,6 +100,7 @@ export default function PostListScreen() {
     if (window.confirm('Are you sure to create?')) {
       try {
         dispatch({ type: 'CREATE_REQUEST' });
+
         const { data } = await axios.post(
           '/api/posts',
           {},

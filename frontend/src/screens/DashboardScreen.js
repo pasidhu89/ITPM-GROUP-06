@@ -112,6 +112,7 @@ export default function DashboardScreen() {
                   ['Date', 'Sales'],
                   ...summary.dailyOrders.map((x) => [x._id, x.sales]),
                 ]}
+                
               ></Chart>
             )}
           </div>

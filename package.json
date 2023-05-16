@@ -21,7 +21,15 @@
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "chart.js": "^4.3.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
+    "react-chartjs-2": "^5.2.0",
     "react-icons": "^4.8.0",
-    "react-intersection-observer": "^9.4.3"
+    "react-intersection-observer": "^9.4.3",
+    "selenium-webdriver": "^4.9.2"
+  },
+  "devDependencies": {
+    "cypress": "^12.12.0"
   }
 }

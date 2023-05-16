@@ -63,7 +63,7 @@ orderRouter.get(
       {
         $group: {
           _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-          orders: { $sum: 1 },
+          // orders: { $sum: 1 },
           sales: { $sum: '$totalPrice' },
         },
       },

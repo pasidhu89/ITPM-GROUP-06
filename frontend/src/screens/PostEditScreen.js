@@ -73,7 +73,7 @@ export default function PostEditScreen() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // console.log(userInfo);
+      console.log(userInfo);
       try {
         dispatch({ type: 'FETCH_REQUEST' });
         const { data } = await axios.get(`/api/posts/${postId}`);

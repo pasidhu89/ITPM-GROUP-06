@@ -9,9 +9,16 @@ import { Store } from '../Store';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { getError } from '../utils';
+import SearchBox from '../components/SearchBox';
 
 import Chart from 'react-google-charts';
 import Card from 'react-bootstrap/Card';
+import { faBorderTopLeft } from '@fortawesome/free-solid-svg-icons';
+
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -66,6 +73,45 @@ const reducer = (state, action) => {
       return state;
   }
 };
+const generateReport = () => {
+  const element = document.getElementById('chartContainer');
+
+  if (!element) {
+    console.error('Element not found!');
+    return;
+  }
+
+  const { offsetWidth, offsetHeight } = element;
+
+  html2canvas(element, { width: offsetWidth, height: offsetHeight }).then((canvas) => {
+    const imgData = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF();
+    pdf.addImage(imgData, 'PNG', 0, 0);
+    pdf.save('report.pdf');
+  });
+};
+
+// const generateReport = () => {
+//   // Get the target element to capture as a screenshot (in this case, the whole document body)
+//   const targetElement = document.body;
+
+//   // Use html2canvas to capture a screenshot of the target element
+//   html2canvas(targetElement).then((canvas) => {
+//     // Create a new jsPDF instance
+//     const pdf = new jsPDF();
+
+//     // Calculate the width and height of the PDF document based on the captured screenshot
+//     const pdfWidth = pdf.internal.pageSize.getWidth();
+//     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+//     // Add the captured screenshot as an image to the PDF document
+//     pdf.addImage(canvas.toDataURL('image/jpeg'), 'JPEG', 0, 0, pdfWidth, pdfHeight);
+
+//     // Download the PDF document with the captured screenshot
+//     pdf.save('report.pdf');
+//   });
+// };
 
 export default function PostDashboardScreen() {
   const [
@@ -175,7 +221,7 @@ export default function PostDashboardScreen() {
   };
 
   return (
-    <div>
+    <div id='chartContainer'>
       <Row>
         <h1>Dashboard</h1>
 
@@ -206,40 +252,146 @@ export default function PostDashboardScreen() {
                 </Card.Body>
               </Card>
             </Col>
+
           </Row>
 
           <br />
           <br />
-
-          <table className="table">
+          <div
+            style={{
+              paddingTop: '15px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              boxShadow: 'rgba(0, 0, 0, 0.25) 0px 4px 14px',
+              height: '70px',
+              borderTopLeftRadius: '15px',
+              borderTopRightRadius: '15px',
+            }}
+          >
+            <div
+              style={{
+                fontFamily: 'Poppins, sans-serif',
+                fontSize: '21px',
+                fontWeight: '600',
+                color: '#000000',
+              }}
+            >
+              Stories
+            </div>
+            <button
+              style={{
+                backgroundColor: ' #3AD784',
+                color: '#FFFFFF',
+                borderRadius: '10px',
+                fontSize: '16px',
+                height: '32px',
+                width: '140px',
+                textAlign: 'center',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+              onClick={generateReport}>
+              Generate report
+            </button>
+            <div style={{ paddingRight: '80px', paddingBottom: '10px' }}>
+              <SearchBox />
+            </div>
+          </div>
+          <table
+            className="table"
+            style={{
+              backgroundColor: '#FFFDFD',
+              borderRadius: '12px',
+              boxShadow: 'rgba(0, 0, 0, 0.25) 0px 4px 14px',
+            }}
+          >
             <thead>
-              <tr>
+              <tr
+                style={{
+                  backgroundColor: '#2A3042',
+                  fontFamily: 'Poppins, sans-serif',
+                  fontSize: '17px',
+                  fontWeight: '600',
+                  color: '#FEFEFE',
+                }}
+              >
                 <th>ID</th>
                 <th>CAPTION</th>
+                <th>LOCATION</th>
                 <th>TYPE</th>
                 <th>ACTIONS</th>
               </tr>
             </thead>
 
-            <tbody>
+            <tbody
+              style={{
+                fontFamily: 'Poppins, sans-serif',
+                fontSize: '15px',
+                fontWeight: '400 ',
+                color: '#575757',
+              }}
+            >
               {posts.map((post) => (
                 <tr key={post._id}>
                   <td>{post._id}</td>
                   <td>{post.caption}</td>
-                  <td>{post.type}</td>
+                  <td>{post.location}</td>
+                  <td>
+                    <div
+                      style={{
+                        width: '110PX',
+                        height: '40PX',
+                        boxShadow: '4px 4px 20px rgba(0, 0, 0, 0.3)',
+                        color:
+                          post.type === 'complain'
+                            ? '#CD2B2B'
+                            : post.type === 'compliment'
+                            ? '#2BCD7F'
+                            : '#2B6CCD',
+                        backgroundColor:
+                          post.type === 'complain'
+                            ? '#EEDED4'
+                            : post.type === 'compliment'
+                            ? '#D4EEE2'
+                            : '#D4E6EE',
+                        textAlign: 'center',
+                        lineHeight: '40px',
+                        fontWeight: '400',
+                        fontFamily: "'Poppins', sans-serif",
+                        fontSize: '14px',
+                        borderRadius: '10px',
+                      }}
+                    >
+                      {post.type === 'complain'
+                        ? 'Complain'
+                        : post.type === 'compliment'
+                        ? 'Compliment'
+                        : 'Other'}
+                    </div>
+                  </td>
 
                   <td>
                     <Button
                       type="button"
-                      variant="light"
+                      style={{
+                        borderRadius: '35px',
+                        backgroundColor: '#007BFF',
+                        color: '#FFFFFF',
+                        width: '100px',
+                      }}
                       onClick={() => navigate(`/userpost/${post._id}`)}
                     >
-                      Edit
+                      View
                     </Button>
                     &nbsp;
                     <Button
                       type="button"
-                      variant="light"
+                      style={{
+                        borderRadius: '35px',
+                        backgroundColor: '#007BFF',
+                        color: '#FFFFFF',
+                        width: '100px',
+                      }}
                       onClick={() => deleteHandler(post)}
                     >
                       Delete
@@ -268,7 +420,7 @@ export default function PostDashboardScreen() {
             ) : (
               <Chart
                 width="100%"
-                height="400px"
+                height="600px"
                 chartType="PieChart"
                 loader={<div>Loading Chart...</div>}
                 data={[
@@ -277,6 +429,7 @@ export default function PostDashboardScreen() {
                 ]}
                 options={{
                   pieHole: 0.5,
+                  is3D: true,
                   colors: [
                     '#A1DC67',
                     '#39CEF3',
@@ -284,11 +437,31 @@ export default function PostDashboardScreen() {
                     '#33FF9F',
                     '#FF5722',
                   ],
-                  // slices: {
-                  //   0: { offset: 0.1 }, // add 10% offset to the first slice
-                  //   1: { offset: 0.05 }, // add 5% offset to the second slice
-                  // },
                 }}
+              ></Chart>
+            )}
+          </div>
+          <div className=" my-3" >
+            <h2>Daily posts</h2>
+            {summary.dailyPosts.length === 0 ? (
+              <MessageBox>No Sale</MessageBox>
+            ) : (
+              <Chart
+                width="100%"
+                height="400px"
+                chartType="Line"
+                loader={<div>Loading Chart...</div>}
+
+                data={[
+                  ['Date', 'Complain', 'Compliment', 'Other'],
+                  ...summary.dailyPosts.map((x) => [
+                    x._id,
+                    x.complain,
+                    x.compliment,
+                    x.other,
+                  ]),
+                ]}
+
               ></Chart>
             )}
           </div>
@@ -297,87 +470,3 @@ export default function PostDashboardScreen() {
     </div>
   );
 }
-
-// import React, { useContext, useEffect, useReducer } from 'react';
-// import Chart from 'react-google-charts';
-// import axios from 'axios';
-// import { Store } from '../Store';
-// import { getError } from '../utils';
-// import LoadingBox from '../components/LoadingBox';
-// import MessageBox from '../components/MessageBox';
-// import Row from 'react-bootstrap/Row';
-// import Col from 'react-bootstrap/Col';
-// import Card from 'react-bootstrap/Card';
-
-// const reducer = (state, action) => {
-//   switch (action.type) {
-//     case 'FETCH_REQUEST':
-//       return { ...state, loading: true };
-//     case 'FETCH_SUCCESS':
-//       return {
-//         ...state,
-//         summary: action.payload,
-//         loading: false,
-//       };
-//     case 'FETCH_FAIL':
-//       return { ...state, loading: false, error: action.payload };
-//     default:
-//       return state;
-//   }
-// };
-// export default function PostDashboardScreen() {
-//   const [{ loading, summary, error }, dispatch] = useReducer(reducer, {
-//     loading: true,
-//     error: '',
-//   });
-//   const { state } = useContext(Store);
-//   const { userInfo } = state;
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const { data } = await axios.get('/api/posts/summary', {
-//           headers: { Authorization: `Bearer ${userInfo.token}` },
-//         });
-//         dispatch({ type: 'FETCH_SUCCESS', payload: data });
-//       } catch (err) {
-//         dispatch({
-//           type: 'FETCH_FAIL',
-//           payload: getError(err),
-//         });
-//       }
-//     };
-//     fetchData();
-//   }, [userInfo]);
-
-//   return (
-//     <div>
-//       <h1>Dashboard</h1>
-//       {loading ? (
-//         <LoadingBox />
-//       ) : error ? (
-//         <MessageBox variant="danger">{error}</MessageBox>
-//       ) : (
-//         <>
-//                   <div className="my-3">
-//             <h2>Types</h2>
-//             {summary.types.length === 0 ? (
-//               <MessageBox>No Category</MessageBox>
-//             ) : (
-//               <Chart
-//                 width="100%"
-//                 height="400px"
-//                 chartType="PieChart"
-//                 loader={<div>Loading Chart...</div>}
-//                 data={[
-//                   ['Type', 'Posts'],
-//                   ...summary.types.map((x) => [x._id, x.count]),
-//                 ]}
-//               ></Chart>
-//             )}
-//           </div>
-//         </>
-//       )}
-//     </div>
-//   );
-// }
