@@ -5,6 +5,8 @@ import Rating from './Rating';
 import axios from 'axios';
 import { useContext } from 'react';
 import { Store } from '../Store';
+import { Col, Row } from 'react-bootstrap';
+import Badge from 'react-bootstrap/Badge';
 
 function Product(props) {
   const { product } = props;
@@ -29,25 +31,91 @@ function Product(props) {
   };
 
   return (
-    <Card>
-      <Link to={`/product/${product.slug}`}>
-        <img src={product.image} className="card-img-top" alt={product.name} style={{ width: '300px', height: '375px' }} />
-      </Link>
-      <Card.Body>
-        <Link to={`/product/${product.slug}`}>
-          <Card.Title>{product.name}</Card.Title>
+    <Row
+      style={{
+        borderRadius: '20px',
+        boxShadow: '0px 20px 50px rgba(0, 0, 0, 0.45)',
+      }}
+    >
+      <Col className="align-self-center col-2 px-0">
+        <div
+          style={{
+            borderTopLeftRadius: '20px',
+            borderBottomLeftRadius: '20px',
+          }}
+        >
+          {' '}
+          <Link to={`/product/${product.slug}`}>
+            <img
+              src={product.image}
+              className=""
+              alt={product.name}
+              style={{
+                height: '250px',
+                width: '100%',
+                objectFit: 'cover',
+                overflow: 'hidden',
+                borderTopLeftRadius: '20px',
+                borderBottomLeftRadius: '20px',
+              }}
+            />
+          </Link>
+        </div>
+      </Col>
+      <Col
+        className={props.productcolClass}
+        style={{
+          // backgroundColor: '#FFFFFF',
+          borderTopRightRadius: '20px',
+          borderBottomRightRadius: '20px',
+        }}
+      >
+        <Link
+          to={`/product/${product.slug}`}
+          style={{ textDecoration: 'none' }}
+        >
+          <Card.Title className={props.producttitleClass}>
+            {product.name}
+          </Card.Title>
         </Link>
-        <Rating rating={product.rating} numReviews={product.numReviews} />
-        <Card.Text>${product.price}</Card.Text>
-        {product.countInStock === 0 ? (
-          <Button variant="light" disabled>
-            Out of stock
-          </Button>
-        ) : (
-          <Button onClick={() => addToCartHandler(product)}>Add to cart</Button>
-        )}
-      </Card.Body>
-    </Card>
+
+        <Card.Text className={props.productdescriptionClass}>
+          {product.description.split(' ').slice(0, 47).join(' ')}...
+        </Card.Text>
+        <Row style={{}}>
+          <Col className=" col-10 text-left">
+            {' '}
+            <Rating rating={product.rating} numReviews={product.numReviews} />
+          </Col>
+          <Col className=" px-3">
+            {product.countInStock === 0 ? (
+              <Button variant="danger" disabled>
+                Out of stock
+              </Button>
+            ) : (
+              <Button
+                style={{
+                  backgroundColor: ' #3AD784',
+                  color: '#FFFFFF',
+                  borderRadius: '10px',
+                  fontSize: '16px',
+                  height: '32px',
+                  width: '140px',
+                  textAlign: 'center',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+                onClick={() => addToCartHandler(product)}
+              >
+                Book Now
+              </Button>
+            )}
+          </Col>
+        </Row>
+
+        <Badge bg="success">Rs : {product.price}</Badge>
+      </Col>
+    </Row>
   );
 }
 export default Product;

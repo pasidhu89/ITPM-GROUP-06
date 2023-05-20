@@ -1,6 +1,6 @@
 # MERN AMAZONA
 
-![amazona](/frontend/public/images/amazona.jpg)
+![travelguard](/frontend/public/images/travelguard.jpg)
 
 # React Tutorial - Build ECommerce in 6 Hours [2022]
 

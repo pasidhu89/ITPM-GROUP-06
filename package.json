@@ -30,6 +30,7 @@
     "selenium-webdriver": "^4.9.2"
   },
   "devDependencies": {
-    "cypress": "^12.12.0"
+    "cypress": "^12.12.0",
+    "sonarqube-scanner": "^3.0.1"
   }
 }

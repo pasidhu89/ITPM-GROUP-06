@@ -20,7 +20,7 @@ main {
   color: #000000;
 }
 .products {
-  display: flex;
+  /* display: flex; */
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -197,6 +197,56 @@ button.thumbnail {
   color: #464646;
 }
 .post-readm-alt {
+  font-family: 'Poppins', sans-serif;
+  font-weight: regular;
+  font-size: 16px;
+  color: #b69efb;
+}
+
+
+.product-col {
+  background-color: #ffffff;
+}
+.product-col-alt {
+  background-color: rgba(18, 17, 39, 0.75);
+}
+
+.product-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 20px;
+  color: #000000;
+  padding-bottom: 3px;
+}
+
+.product-title-alt {
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 20px;
+  color: #ededed;
+  padding-bottom: 3px;
+}
+.product-description {
+  font-family: 'Poppins', sans-serif;
+  font-weight: regular;
+  font-size: 16px;
+  color: #464646;
+}
+
+.product-description-alt {
+  font-family: 'Poppins', sans-serif;
+  font-weight: regular;
+  font-size: 16px;
+  color: #f6f6f6;
+}
+
+.product-readm {
+  font-family: 'Poppins', sans-serif;
+  font-weight: regular;
+  font-size: 16px;
+  color: #464646;
+}
+.product-readm-alt {
   font-family: 'Poppins', sans-serif;
   font-weight: regular;
   font-size: 16px;

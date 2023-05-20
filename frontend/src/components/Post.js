@@ -6,12 +6,13 @@ import axios from 'axios';
 import { useContext } from 'react';
 import { Store } from '../Store';
 import { Col, Row } from 'react-bootstrap';
+import Badge from 'react-bootstrap/Badge';
 
 function Post(props) {
   const { post } = props;
 
   return (
-    <Row 
+    <Row
       style={{
         borderRadius: '20px',
         boxShadow: '0px 20px 50px rgba(0, 0, 0, 0.45)',
@@ -43,7 +44,7 @@ function Post(props) {
         </div>
       </Col>
       <Col
-      className={props.colClass}
+        className={props.colClass}
         style={{
           // backgroundColor: '#FFFFFF',
           borderTopRightRadius: '20px',
@@ -51,28 +52,10 @@ function Post(props) {
         }}
       >
         <Link to={`/post/${post._id}`} style={{ textDecoration: 'none' }}>
-          <Card.Title
-           className={props.titleClass}
-            // style={{
-            //   fontFamily: 'Poppins , sans-serif',
-            //   fontWeight: 'bold',
-            //   fontSize: 20,
-            //   color: '#000000',
-            // }}
-          >
-            {post.caption}
-          </Card.Title>
+          <Card.Title className={props.titleClass}>{post.caption}</Card.Title>
         </Link>
 
-        <Card.Text
-        className={props.descriptionClass}
-          // style={{
-          //   fontFamily: 'Poppins , sans-serif',
-          //   fontWeight: 'regular',
-          //   fontSize: 16,
-          //   color: '#464646',
-          // }}
-        >
+        <Card.Text className={props.descriptionClass}>
           {post.description.split(' ').slice(0, 47).join(' ')}...
         </Card.Text>
         <Row style={{}}>
@@ -86,11 +69,16 @@ function Post(props) {
                 marginBottom: '10px',
                 width: '100%',
                 height: '50px',
-                backgroundColor: '#FFFFFF',
-                color: '#9D9D9D',
+                backgroundColor:
+                  post.type === 'complain'
+                    ? 'rgba(214, 21, 53, 0.5)'
+                    : post.type === 'compliment'
+                    ? 'rgba(5, 210, 111, 0.5)'
+                    : 'rgba(45, 104, 254, 0.5)',
+                color: '#FFFFFF',
                 boxShadow:
                   post.type === 'complain'
-                    ? '2px 2px 10px rgba(210, 5, 5, 0.45)'
+                    ? '2px 2px 10px rgba(214, 21, 53, 0.45)'
                     : post.type === 'compliment'
                     ? '2px 2px 10px rgba(5, 210, 111, 0.45)'
                     : '2px 2px 10px rgba(0, 123, 255, 0.45)',
@@ -99,7 +87,7 @@ function Post(props) {
                 fontWeight: '400',
                 fontFamily: "'Poppins', sans-serif",
                 fontSize: '16px',
-                borderRadius: '50px',
+                borderRadius: '100px',
               }}
             >
               {post.type === 'complain'
@@ -115,13 +103,10 @@ function Post(props) {
               }}
             >
               <h4
-               className={props.readmClass}
-                // style={{
-                //   fontFamily: 'Poppins , sans-serif',
-                //   fontWeight: 'regular',
-                //   fontSize: 16,
-                //   color: '#464646',
-                // }}
+                className={props.readmClass}
+                style={{
+paddingTop: '10px',
+                }}
               >
                 Read More >>
               </h4>
@@ -129,7 +114,7 @@ function Post(props) {
           </Col>
         </Row>
 
-        <Card.Text>{post.location}</Card.Text>
+        <Badge bg="primary">{post.location}</Badge>
       </Col>
     </Row>
   );

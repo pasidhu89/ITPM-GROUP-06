@@ -76,15 +76,14 @@ const HomeScreen = () => {
                   }
                   descriptionClass={
                     posts.indexOf(post) % 2 === 0
-                    ? 'post-description'
-                    : 'post-description-alt'
-                } 
-                readmClass={
-                  posts.indexOf(post) % 2 === 0
-                  ? 'post-readm'
-                  : 'post-readm-alt'
-                }                  
-                
+                      ? 'post-description'
+                      : 'post-description-alt'
+                  }
+                  readmClass={
+                    posts.indexOf(post) % 2 === 0
+                      ? 'post-readm'
+                      : 'post-readm-alt'
+                  }
                 />
               </div>
             ))}
@@ -93,20 +92,50 @@ const HomeScreen = () => {
       </div>
 
       <h1>Featured Products</h1>
+
       <div className="products">
         {loading ? (
           <LoadingBox />
         ) : error ? (
           <MessageBox variant="danger">{error}</MessageBox>
         ) : (
-          <Row>
+          <div>
             {console.log(products)}
             {products.map((product) => (
-              <Col key={product.slug} sm={6} md={4} lg={3} className="mb-3">
-                <Product product={product}></Product>
-              </Col>
+              <div
+                key={product.slug}
+                className={`mb-5 ${
+                  products.indexOf(product) % 2 === 0 ? 'product-even' : 'product-odd'
+                }`}
+                style={{ paddingLeft: '40px' }}
+                // style={{ paddingLeft: '40px' }}
+              >
+                <Product
+                  product={product}
+                  productcolClass={
+                    products.indexOf(product) % 2 === 0
+                      ? 'product-col'
+                      : 'product-col-alt'
+                  }
+                  producttitleClass={
+                    products.indexOf(product) % 2 === 0
+                      ? 'product-title'
+                      : 'product-title-alt'
+                  }
+                  productdescriptionClass={
+                    products.indexOf(product) % 2 === 0
+                      ? 'product-description'
+                      : 'product-description-alt'
+                  }
+                  productreadmClass={
+                    products.indexOf(product) % 2 === 0
+                      ? 'product-readm'
+                      : 'product-readm-alt'
+                  }
+                />
+              </div>
             ))}
-          </Row>
+          </div>
         )}
       </div>
     </div>
