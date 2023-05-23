@@ -18,7 +18,15 @@ import { faBorderTopLeft } from '@fortawesome/free-solid-svg-icons';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
 
+import 'jspdf-autotable';
+
+import Post from '../components/Post';
+
+// Register fonts
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -73,6 +81,7 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
 const generateReport = () => {
   const element = document.getElementById('chartContainer');
 
@@ -83,35 +92,16 @@ const generateReport = () => {
 
   const { offsetWidth, offsetHeight } = element;
 
-  html2canvas(element, { width: offsetWidth, height: offsetHeight }).then((canvas) => {
-    const imgData = canvas.toDataURL('image/png');
+  html2canvas(element, { width: offsetWidth, height: offsetHeight }).then(
+    (canvas) => {
+      const imgData = canvas.toDataURL('image/png');
 
-    const pdf = new jsPDF();
-    pdf.addImage(imgData, 'PNG', 0, 0);
-    pdf.save('report.pdf');
-  });
+      const pdf = new jsPDF();
+      pdf.addImage(imgData, 'PNG', 2, 0, 205, 287);
+      pdf.save('report.pdf');
+    }
+  );
 };
-
-// const generateReport = () => {
-//   // Get the target element to capture as a screenshot (in this case, the whole document body)
-//   const targetElement = document.body;
-
-//   // Use html2canvas to capture a screenshot of the target element
-//   html2canvas(targetElement).then((canvas) => {
-//     // Create a new jsPDF instance
-//     const pdf = new jsPDF();
-
-//     // Calculate the width and height of the PDF document based on the captured screenshot
-//     const pdfWidth = pdf.internal.pageSize.getWidth();
-//     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-//     // Add the captured screenshot as an image to the PDF document
-//     pdf.addImage(canvas.toDataURL('image/jpeg'), 'JPEG', 0, 0, pdfWidth, pdfHeight);
-
-//     // Download the PDF document with the captured screenshot
-//     pdf.save('report.pdf');
-//   });
-// };
 
 export default function PostDashboardScreen() {
   const [
@@ -188,6 +178,7 @@ export default function PostDashboardScreen() {
 
         dispatch({ type: 'FETCH_SUCCESS', payload: adminResponse.data });
         dispatch({ type: 'PIE_FETCH_SUCCESS', payload: summaryResponse.data });
+        console.log('test', summaryResponse.data.dailyPosts.length);
       } catch (err) {
         dispatch({
           type: 'PIE_FETCH_FAIL',
@@ -220,8 +211,43 @@ export default function PostDashboardScreen() {
     }
   };
 
+  const generateReport = async () => {
+    const doc = new jsPDF();
+
+    // Generate table
+    const tableData = posts.map((post) => [
+      post._id,
+      post.caption,
+      post.location,
+      post.type,
+    ]);
+    const tableHeaders = ['ID', 'CAPTION', 'LOCATION', 'TYPE'];
+    const tableConfig = {
+      head: [tableHeaders],
+      body: tableData,
+    };
+    doc.autoTable(tableConfig);
+
+    // Add Types chart
+    doc.addPage();
+    doc.text('Types', 10, 10); // Add the title for the Types section
+    const typesChart = document.querySelector('#typesChart');
+    const typesChartImage = await html2canvas(typesChart);
+    doc.addImage(typesChartImage, 'PNG', 10, 20, 190, 120);
+
+    // Add Daily posts chart
+    doc.addPage();
+    doc.text('Daily posts', 10, 10); // Add the title for the Daily posts section
+    const dailyPostsChart = document.querySelector('#dailyPostsChart');
+    const dailyPostsChartImage = await html2canvas(dailyPostsChart);
+    doc.addImage(dailyPostsChartImage, 'PNG', 10, 20, 190, 120);
+
+    // Save the PDF
+    doc.save('post_report.pdf');
+  };
+
   return (
-    <div id='chartContainer'>
+    <div id="chartContainer">
       <Row>
         <h1>Dashboard</h1>
 
@@ -252,7 +278,6 @@ export default function PostDashboardScreen() {
                 </Card.Body>
               </Card>
             </Col>
-
           </Row>
 
           <br />
@@ -290,15 +315,18 @@ export default function PostDashboardScreen() {
                 border: 'none',
                 cursor: 'pointer',
               }}
-              onClick={generateReport}>
+              onClick={generateReport}
+            >
               Generate report
             </button>
+
             <div style={{ paddingRight: '80px', paddingBottom: '10px' }}>
-              <SearchBox />
+              {/* <SearchBox /> */}
             </div>
           </div>
           <table
             className="table"
+            id="pdfdiv"
             style={{
               backgroundColor: '#FFFDFD',
               borderRadius: '12px',
@@ -415,55 +443,57 @@ export default function PostDashboardScreen() {
 
           <div className="my-3">
             <h2>Types</h2>
-            {summary.types.length === 0 ? (
-              <MessageBox>No Category</MessageBox>
-            ) : (
-              <Chart
-                width="100%"
-                height="600px"
-                chartType="PieChart"
-                loader={<div>Loading Chart...</div>}
-                data={[
-                  ['Type', 'Posts'],
-                  ...summary.types.map((x) => [x._id, x.count]),
-                ]}
-                options={{
-                  pieHole: 0.5,
-                  is3D: true,
-                  colors: [
-                    '#A1DC67',
-                    '#39CEF3',
-                    '#FF4906',
-                    '#33FF9F',
-                    '#FF5722',
-                  ],
-                }}
-              ></Chart>
-            )}
+            <div id="typesChart">
+              {summary.types.length === 0 ? (
+                <MessageBox>No Category</MessageBox>
+              ) : (
+                <Chart
+                  width="100%"
+                  height="600px"
+                  chartType="PieChart"
+                  loader={<div>Loading Chart...</div>}
+                  data={[
+                    ['Type', 'Posts'],
+                    ...summary.types.map((x) => [x._id, x.count]),
+                  ]}
+                  options={{
+                    pieHole: 0.5,
+                    is3D: true,
+                    colors: [
+                      '#A1DC67',
+                      '#39CEF3',
+                      '#FF4906',
+                      '#33FF9F',
+                      '#FF5722',
+                    ],
+                  }}
+                ></Chart>
+              )}
+            </div>
           </div>
-          <div className=" my-3" >
+          <div className=" my-3">
             <h2>Daily posts</h2>
-            {summary.dailyPosts.length === 0 ? (
-              <MessageBox>No Sale</MessageBox>
-            ) : (
-              <Chart
-                width="100%"
-                height="400px"
-                chartType="Line"
-                loader={<div>Loading Chart...</div>}
-
-                data={[
-                  ['Date', 'Complain', 'Compliment', 'Other'],
-                  ...summary.dailyPosts.map((x) => [
-                    x._id,
-                    x.complain,
-                    x.compliment,
-                    x.other,
-                  ]),
-                ]}
-
-              ></Chart>
-            )}
+            <div id="dailyPostsChart">
+              {summary.dailyPosts.length === 0 ? (
+                <MessageBox>No Sale</MessageBox>
+              ) : (
+                <Chart
+                  width="100%"
+                  height="400px"
+                  chartType="Line"
+                  loader={<div>Loading Chart...</div>}
+                  data={[
+                    ['Date', 'Complain', 'Compliment', 'Other'],
+                    ...summary.dailyPosts.map((x) => [
+                      x._id,
+                      x.complain,
+                      x.compliment,
+                      x.other,
+                    ]),
+                  ]}
+                ></Chart>
+              )}
+            </div>
           </div>
         </>
       )}

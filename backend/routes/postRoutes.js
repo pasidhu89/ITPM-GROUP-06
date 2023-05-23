@@ -57,7 +57,7 @@ postRouter.put(
 postRouter.delete(
   '/:id',
   isAuth,
-  isAdmin,
+  // isAdmin,
   expressAsyncHandler(async (req, res) => {
     const post = await Post.findById(req.params.id);
     if (post) {

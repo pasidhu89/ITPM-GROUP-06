@@ -85,6 +85,7 @@ export default function PostListScreen() {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
 
+        console.log("data", data);
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (err) {}
     };
